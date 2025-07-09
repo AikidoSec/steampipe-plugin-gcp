@@ -354,6 +354,12 @@ func tableGcpSQLDatabaseInstance(ctx context.Context) *plugin.Table {
 				Description: "A list of reasons for the suspension, if the instance state is SUSPENDED.",
 				Type:        proto.ColumnType_JSON,
 			},
+			{
+				Name:        "deletion_protection_enabled",
+				Description: "Specifies if the deletion protection is enabled for the instance.",
+				Type:        proto.ColumnType_BOOL,
+				Transform:   transform.FromField("Settings.DeletionProtectionEnabled"),
+			},
 
 			// standard steampipe columns
 			{
