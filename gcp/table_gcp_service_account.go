@@ -201,6 +201,21 @@ func getServiceAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plu
 	account := h.Item.(*iam.ServiceAccount)
 	plugin.Logger(ctx).Trace("getServiceAccountIamPolicy")
 
+	val := ctx.Value("serviceAccountEmail")
+	if val != nil {
+		authServiceAccountEmail, ok := val.(string)
+		if !ok {
+			plugin.Logger(ctx).Error("getServiceAccountIamPolicy", "type_assertion_error", val)
+			return nil, nil
+		}
+
+		// Ignore if this row’s service account matches the one used for authentication,
+		// since this would trigger alerts in GCP Security Command Center.
+		if authServiceAccountEmail != "" && account.Email == authServiceAccountEmail {
+			return nil, nil
+		}
+	}
+
 	// Create Service Connection
 	service, err := IAMService(ctx, d)
 	if err != nil {
