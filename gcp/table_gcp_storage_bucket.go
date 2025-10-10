@@ -356,11 +356,11 @@ func extractRetentionPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 	if bucket.RetentionPolicy != nil {
 
-		bucketRetentionPolicy["is_locked"] = bucket.RetentionPolicy.IsLocked
+		bucketRetentionPolicy["isLocked"] = bucket.RetentionPolicy.IsLocked
 
-		bucketRetentionPolicy["retention_period"] = bucket.RetentionPolicy.RetentionPeriod
+		bucketRetentionPolicy["retentionPeriod"] = bucket.RetentionPolicy.RetentionPeriod
 
-		bucketRetentionPolicy["effective_time"] = bucket.RetentionPolicy.EffectiveTime
+		bucketRetentionPolicy["effectiveTime"] = bucket.RetentionPolicy.EffectiveTime
 	}
 
 	return bucketRetentionPolicy, nil
