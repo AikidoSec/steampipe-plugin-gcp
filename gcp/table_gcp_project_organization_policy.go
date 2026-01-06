@@ -192,7 +192,7 @@ func getOrganizationPolicyAkas(ctx context.Context, d *plugin.QueryData, h *plug
 	project := projectId.(string)
 
 	// Build resource aka
-	akas := []string{"gcp://cloudresourcemanager.googleapis.com/projects/" + project}
+	akas := []string{"gcp://cloudresourcemanager.googleapis.com/projects/" + project + "/orgPolicy"}
 
 	return akas, nil
 }
