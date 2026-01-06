@@ -154,7 +154,7 @@ func getComputeProjectMetadataTurbotData(ctx context.Context, d *plugin.QueryDat
 	project := projectId.(string)
 
 	// Build resource aka
-	akas := []string{"gcp://cloudresourcemanager.googleapis.com/projects/" + project}
+	akas := []string{"gcp://compute.googleapis.com/projects/" + project}
 
 	// Mapping all turbot defined properties
 	turbotData := map[string]interface{}{
