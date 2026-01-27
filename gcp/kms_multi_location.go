@@ -33,7 +33,7 @@ func BuildLocationList(ctx context.Context, d *plugin.QueryData) []map[string]in
 		var ok bool
 		ignoredLocations, ok = val.([]string)
 		if !ok {
-			plugin.Logger(ctx).Error("BuildCloudRunLocationList", "type_assertion_error", val)
+			plugin.Logger(ctx).Error("BuildLocationList", "type_assertion_error", val)
 		}
 	}
 

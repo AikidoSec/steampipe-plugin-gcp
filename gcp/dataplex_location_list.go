@@ -29,7 +29,7 @@ func BuildDataplexLocationList(ctx context.Context, d *plugin.QueryData) []map[s
 		var ok bool
 		ignoredLocations, ok = val.([]string)
 		if !ok {
-			plugin.Logger(ctx).Error("BuildCloudRunLocationList", "type_assertion_error", val)
+			plugin.Logger(ctx).Error("BuildDataplexLocationList", "type_assertion_error", val)
 		}
 	}
 

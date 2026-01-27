@@ -24,7 +24,7 @@ func BuildVPCAccessLocationList(ctx context.Context, d *plugin.QueryData) []map[
 		var ok bool
 		ignoredLocations, ok = val.([]string)
 		if !ok {
-			plugin.Logger(ctx).Error("BuildCloudRunLocationList", "type_assertion_error", val)
+			plugin.Logger(ctx).Error("BuildVPCAccessLocationList", "type_assertion_error", val)
 		}
 	}
 
