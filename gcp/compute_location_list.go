@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"slices"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
@@ -23,6 +24,16 @@ func BuildComputeLocationList(ctx context.Context, d *plugin.QueryData) []map[st
 		return cachedData.([]map[string]interface{})
 	}
 
+	var ignoredLocations []string
+	val := ctx.Value("ignoredLocations")
+	if val != nil {
+		var ok bool
+		ignoredLocations, ok = val.([]string)
+		if !ok {
+			plugin.Logger(ctx).Error("BuildComputeLocationList", "type_assertion_error", val)
+		}
+	}
+
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -42,9 +53,13 @@ func BuildComputeLocationList(ctx context.Context, d *plugin.QueryData) []map[st
 	}
 
 	// validate location list
-	matrix := make([]map[string]interface{}, len(resp.Items))
-	for i, location := range resp.Items {
-		matrix[i] = map[string]interface{}{matrixKeyLocation: location.Name}
+	matrix := make([]map[string]interface{}, 0, len(resp.Items))
+	for _, location := range resp.Items {
+		if slices.Contains(ignoredLocations, location.Name) {
+			continue
+		}
+
+		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.Name})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix
@@ -57,6 +72,16 @@ func BuildComputeLocationListWithGlobal(ctx context.Context, d *plugin.QueryData
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
 		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
 		return cachedData.([]map[string]interface{})
+	}
+
+	var ignoredLocations []string
+	val := ctx.Value("ignoredLocations")
+	if val != nil {
+		var ok bool
+		ignoredLocations, ok = val.([]string)
+		if !ok {
+			plugin.Logger(ctx).Error("BuildComputeLocationListWithGlobal", "type_assertion_error", val)
+		}
 	}
 
 	// Create Service Connection
@@ -78,12 +103,16 @@ func BuildComputeLocationListWithGlobal(ctx context.Context, d *plugin.QueryData
 	}
 
 	// Add global and all regions to the matrix
-	matrix := make([]map[string]interface{}, len(resp.Items)+1)
+	matrix := make([]map[string]interface{}, 0, len(resp.Items)+1)
 	// Add global first
-	matrix[0] = map[string]interface{}{matrixKeyLocation: "global"}
+	matrix = append(matrix, map[string]interface{}{matrixKeyLocation: "global"})
 	// Then add all regions
-	for i, location := range resp.Items {
-		matrix[i+1] = map[string]interface{}{matrixKeyLocation: location.Name}
+	for _, location := range resp.Items {
+		if slices.Contains(ignoredLocations, location.Name) {
+			continue
+		}
+
+		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.Name})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix

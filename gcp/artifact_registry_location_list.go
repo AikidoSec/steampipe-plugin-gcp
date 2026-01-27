@@ -2,11 +2,11 @@ package gcp
 
 import (
 	"context"
+	"slices"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"google.golang.org/api/artifactregistry/v1"
 )
-
 
 // BuildregionList :: return a list of matrix items, one per region specified
 func BuildArtifactRegistryLocationList(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
@@ -16,6 +16,16 @@ func BuildArtifactRegistryLocationList(ctx context.Context, d *plugin.QueryData)
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
 		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
 		return cachedData.([]map[string]interface{})
+	}
+
+	var ignoredLocations []string
+	val := ctx.Value("ignoredLocations")
+	if val != nil {
+		var ok bool
+		ignoredLocations, ok = val.([]string)
+		if !ok {
+			plugin.Logger(ctx).Error("BuildArtifactRegistryLocationList", "type_assertion_error", val)
+		}
 	}
 
 	// Create Service Connection
@@ -46,9 +56,13 @@ func BuildArtifactRegistryLocationList(ctx context.Context, d *plugin.QueryData)
 	}
 
 	// validate location list
-	matrix := make([]map[string]interface{}, len(locations))
-	for i, location := range locations {
-		matrix[i] = map[string]interface{}{matrixKeyLocation: location.LocationId}
+	matrix := make([]map[string]interface{}, 0, len(locations))
+	for _, location := range locations {
+		if slices.Contains(ignoredLocations, location.LocationId) {
+			continue
+		}
+
+		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.LocationId})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix
