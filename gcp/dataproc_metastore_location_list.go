@@ -2,11 +2,10 @@ package gcp
 
 import (
 	"context"
+	"slices"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
-
-
 
 // BuildDataprocMetastoreLocationList :: return a list of matrix items, one per region specified
 func BuildDataprocMetastoreLocationList(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
@@ -16,6 +15,16 @@ func BuildDataprocMetastoreLocationList(ctx context.Context, d *plugin.QueryData
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
 		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
 		return cachedData.([]map[string]interface{})
+	}
+
+	var ignoredLocations []string
+	val := ctx.Value("ignoredLocations")
+	if val != nil {
+		var ok bool
+		ignoredLocations, ok = val.([]string)
+		if !ok {
+			plugin.Logger(ctx).Error("BuildCloudRunLocationList", "type_assertion_error", val)
+		}
 	}
 
 	// Create Service Connection
@@ -37,8 +46,12 @@ func BuildDataprocMetastoreLocationList(ctx context.Context, d *plugin.QueryData
 	}
 
 	// validate location list
-	var matrix []map[string]interface{}
+	matrix := make([]map[string]interface{}, 0, len(resp.Locations))
 	for _, location := range resp.Locations {
+		if slices.Contains(ignoredLocations, location.LocationId) {
+			continue
+		}
+
 		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.LocationId})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)

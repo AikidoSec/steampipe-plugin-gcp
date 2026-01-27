@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"slices"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"google.golang.org/api/vpcaccess/v1"
@@ -15,6 +16,16 @@ func BuildVPCAccessLocationList(ctx context.Context, d *plugin.QueryData) []map[
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
 		plugin.Logger(ctx).Debug("BuildVPCAccessLocationList:", cachedData.([]map[string]interface{}))
 		return cachedData.([]map[string]interface{})
+	}
+
+	var ignoredLocations []string
+	val := ctx.Value("ignoredLocations")
+	if val != nil {
+		var ok bool
+		ignoredLocations, ok = val.([]string)
+		if !ok {
+			plugin.Logger(ctx).Error("BuildCloudRunLocationList", "type_assertion_error", val)
+		}
 	}
 
 	// Create Service Connection
@@ -31,10 +42,6 @@ func BuildVPCAccessLocationList(ctx context.Context, d *plugin.QueryData) []map[
 	project := projectData.Project
 
 	resp := service.Projects.Locations.List("projects/" + project)
-	if err != nil {
-		return nil
-	}
-
 	var locations []*vpcaccess.Location
 
 	if err := resp.Pages(ctx, func(page *vpcaccess.ListLocationsResponse) error {
@@ -45,9 +52,13 @@ func BuildVPCAccessLocationList(ctx context.Context, d *plugin.QueryData) []map[
 	}
 
 	// validate location list
-	matrix := make([]map[string]interface{}, len(locations))
-	for i, location := range locations {
-		matrix[i] = map[string]interface{}{matrixKeyLocation: location.LocationId}
+	matrix := make([]map[string]interface{}, 0, len(locations))
+	for _, location := range locations {
+		if slices.Contains(ignoredLocations, location.LocationId) {
+			continue
+		}
+
+		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.LocationId})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix
