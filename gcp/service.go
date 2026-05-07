@@ -28,6 +28,7 @@ import (
 	"google.golang.org/api/dataproc/v1"
 	"google.golang.org/api/dns/v1"
 	"google.golang.org/api/essentialcontacts/v1"
+	firebase "google.golang.org/api/firebase/v1beta1"
 	"google.golang.org/api/firestore/v1"
 	"google.golang.org/api/iam/v1"
 	"google.golang.org/api/logging/v2"
@@ -662,6 +663,24 @@ func FirestoreDatabaseService(ctx context.Context, d *plugin.QueryData) (*firest
 
 	// so it was not in cache - create service
 	svc, err := firestore.NewService(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	d.ConnectionManager.Cache.Set(serviceCacheKey, svc)
+	return svc, nil
+}
+
+// FirebaseService returns the service connection for GCP Firebase service
+func FirebaseService(ctx context.Context, d *plugin.QueryData) (*firebase.Service, error) {
+	serviceCacheKey := "FirebaseService"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
+		return cachedData.(*firebase.Service), nil
+	}
+
+	opts := setSessionConfig(ctx, d.Connection)
+
+	svc, err := firebase.NewService(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
