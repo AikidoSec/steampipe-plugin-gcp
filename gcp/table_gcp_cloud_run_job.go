@@ -228,7 +228,7 @@ func tableGcpCloudRunJob(ctx context.Context) *plugin.Table {
 //// LIST FUNCTION
 
 func listCloudRunJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	region := d.EqualsQualString("region")
+	region := d.EqualsQualString("location")
 
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)

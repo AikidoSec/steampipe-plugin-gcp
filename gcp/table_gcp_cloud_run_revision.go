@@ -271,7 +271,7 @@ func tableGcpCloudRunRevision(_ context.Context) *plugin.Table {
 //// LIST FUNCTION
 
 func listCloudRunRevisions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	region := d.EqualsQualString("region")
+	region := d.EqualsQualString("location")
 
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
