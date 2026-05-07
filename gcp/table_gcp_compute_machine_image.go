@@ -133,7 +133,7 @@ func tableGcpComputeMachineImage(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeMachineImages(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeMachineImages(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -186,7 +186,7 @@ func listComputeMachineImages(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getComputeMachineImage(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeMachineImage(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -219,13 +219,13 @@ func getComputeMachineImage(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// TRANSFORM FUNCTIONS
 
-func machineImageTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func machineImageTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.MachineImage)
 	param := d.Param.(string)
 
 	project := strings.Split(data.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/machineImages/" + data.Name},
 	}

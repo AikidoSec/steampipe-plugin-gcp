@@ -399,7 +399,7 @@ func tableGcpSQLDatabaseInstance(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listSQLDatabaseInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listSQLDatabaseInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listSQLDatabaseInstances")
 
 	// Create service connection
@@ -465,7 +465,7 @@ func listSQLDatabaseInstances(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getSQLDatabaseInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getSQLDatabaseInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getSQLDatabaseInstance")
 
 	// Create service connection
@@ -497,7 +497,7 @@ func getSQLDatabaseInstance(ctx context.Context, d *plugin.QueryData, h *plugin.
 	return resp, nil
 }
 
-func getSQLDatabaseInstanceUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getSQLDatabaseInstanceUsers(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Create service connection
 	service, err := CloudSQLAdminService(ctx, d)
@@ -521,7 +521,7 @@ func getSQLDatabaseInstanceUsers(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// TRANSFORM FUNCTIONS
 
-func sqlDatabaseInstanceAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func sqlDatabaseInstanceAka(_ context.Context, d *transform.TransformData) (any, error) {
 	instance := d.HydrateItem.(*sqladmin.DatabaseInstance)
 
 	akas := []string{"gcp://cloudsql.googleapis.com/projects/" + instance.Project + "/regions/" + instance.Region + "/instances/" + instance.Name}

@@ -98,7 +98,7 @@ func tableGcpComposerEnvironment(ctx context.Context) *plugin.Table {
 				Name:        "storage_config_bucket",
 				Description: "Storage configuration for this environment.",
 				Type:        proto.ColumnType_STRING,
-				Transform: transform.FromField("StorageConfig.Bucket"),
+				Transform:   transform.FromField("StorageConfig.Bucket"),
 			},
 			{
 				Name:        "data_retention_config",
@@ -212,7 +212,7 @@ func tableGcpComposerEnvironment(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComposerEnvironments(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComposerEnvironments(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	location := d.EqualsQualString(matrixKeyLocation)
 
@@ -265,7 +265,7 @@ func listComposerEnvironments(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getComposerEnvironment(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComposerEnvironment(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	location := d.EqualsQualString(matrixKeyLocation)
 
 	// Create Service Connection
@@ -296,13 +296,13 @@ func getComposerEnvironment(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// TRANSFORM FUNCTIONS
 
-func composerEnvironmentTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func composerEnvironmentTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	env := d.HydrateItem.(*composer.Environment)
 
 	param := d.Param.(string)
 	splitEnv := strings.Split(env.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  splitEnv[1],
 		"Location": splitEnv[3],
 		"SelfLink": "https://composer.googleapis.com/v1/" + env.Name,

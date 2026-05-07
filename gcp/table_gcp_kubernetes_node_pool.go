@@ -144,7 +144,7 @@ func tableGcpKubernetesNodePool(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listKubernetesNodePools(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listKubernetesNodePools(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listKubernetesNodePools")
 
 	// Get the details of Cluster
@@ -185,7 +185,7 @@ func listKubernetesNodePools(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// HYDRATE FUNCTIONS
 
-func getKubernetesNodePool(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKubernetesNodePool(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKubernetesNodePool")
 
 	// Create Service Connection
@@ -230,14 +230,14 @@ func getKubernetesNodePool(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// TRANSFORM FUNCTIONS
 
-func kubernetesNodePoolTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func kubernetesNodePoolTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("kubernetesNodePoolTurbotData")
 	nodePool := d.HydrateItem.(*container.NodePool)
 
 	splitName := strings.Split(nodePool.SelfLink, "/")
 	akas := []string{strings.Replace(nodePool.SelfLink, "https://", "gcp://", 1)}
 
-	result := map[string]interface{}{
+	result := map[string]any{
 		"ClusterName": splitName[9],
 		"Location":    splitName[7],
 		"Akas":        akas,
@@ -245,7 +245,7 @@ func kubernetesNodePoolTurbotData(ctx context.Context, d *transform.TransformDat
 	return result[d.Param.(string)], nil
 }
 
-func gcpKubernetesNodePoolLocationType(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpKubernetesNodePoolLocationType(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("gcpKubernetesNodePoolLocationType")
 	nodePool := d.HydrateItem.(*container.NodePool)
 

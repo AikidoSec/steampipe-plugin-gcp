@@ -120,7 +120,7 @@ func tableGcpAppEngineApplication(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func getAppEngineApplication(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getAppEngineApplication(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Create Service Connection
 	service, err := AppEngineService(ctx, d)

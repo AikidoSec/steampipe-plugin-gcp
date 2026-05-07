@@ -121,7 +121,7 @@ func tableGcpComputeTargetPool(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeTargetPools(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeTargetPools(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeTargetPools")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -179,7 +179,7 @@ func listComputeTargetPools(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTION
 
-func getComputeTargetPool(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeTargetPool(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -222,14 +222,14 @@ func getComputeTargetPool(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTION
 
-func gcpComputeTargetPoolTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeTargetPoolTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	targetPool := d.HydrateItem.(*compute.TargetPool)
 	param := d.Param.(string)
 
 	region := getLastPathElement(types.SafeString(targetPool.Region))
 	project := strings.Split(targetPool.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/targetPools/" + targetPool.Name},
 	}

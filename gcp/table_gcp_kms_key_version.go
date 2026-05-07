@@ -147,7 +147,7 @@ func tableGcpKmsKeyVersion(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listKeyVersionDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listKeyVersionDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listKeyVersionDetails")
 
 	service, err := KMSService(ctx, d)
@@ -229,7 +229,7 @@ func getCryptoKeyVersionDetails(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// HYDRATE FUNCTIONS
 
-func getKeyVersionDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKeyVersionDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKeyVersionDetail")
 
 	// Create Service Connection
@@ -261,7 +261,7 @@ func getKeyVersionDetail(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// TRANSFORM FUNCTIONS
 
-func kmsKeyVersionTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func kmsKeyVersionTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	key := d.HydrateItem.(*cloudkms.CryptoKeyVersion)
 	param := d.Param.(string)
 
@@ -271,7 +271,7 @@ func kmsKeyVersionTurbotData(_ context.Context, d *transform.TransformData) (int
 	key_name := strings.Split(key.Name, "/")[7]
 	crypto_key_version := strings.Split(key.Name, "/")[9]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":          project,
 		"Location":         location,
 		"KeyRing":          key_ring_name,
@@ -284,7 +284,7 @@ func kmsKeyVersionTurbotData(_ context.Context, d *transform.TransformData) (int
 	return turbotData[param], nil
 }
 
-func kmsKeyVersionSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func kmsKeyVersionSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*cloudkms.CryptoKeyVersion)
 	selfLink := "https://cloudkms.googleapis.com/v1/" + data.Name
 

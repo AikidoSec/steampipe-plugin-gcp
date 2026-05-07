@@ -82,7 +82,7 @@ func tableGcpOrganization(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGCPOrganizations(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listGCPOrganizations(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listGCPOrganizations")
 
 	// Create Service Connection
@@ -127,7 +127,7 @@ func listGCPOrganizations(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 	return nil, nil
 }
 
-func getOrganizationContacts(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getOrganizationContacts(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	organizationName := h.Item.(*cloudresourcemanager.Organization).Name
 	pathItems := strings.Split(organizationName, "/")
 	organizationId := pathItems[len(pathItems)-1]
@@ -154,7 +154,7 @@ func getOrganizationContacts(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func getOrganizationAka(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func getOrganizationAka(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("getOrganizationAka")
 
 	data := d.HydrateItem.(*cloudresourcemanager.Organization)

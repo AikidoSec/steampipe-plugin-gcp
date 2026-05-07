@@ -119,7 +119,7 @@ type budgetInfo = struct {
 
 //// LIST FUNCTION
 
-func listBillingBudgets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listBillingBudgets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	acc := h.Item.(*cloudbilling.BillingAccount)
 
 	// Validate - User input(if any) should match with the hydrated billing account
@@ -171,7 +171,7 @@ func listBillingBudgets(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTION
 
-func getBillingBudget(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBillingBudget(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	name := d.EqualsQuals["name"].GetStringValue()
 	acc := d.EqualsQuals["billing_account"].GetStringValue()
 
@@ -191,7 +191,7 @@ func getBillingBudget(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	return budgetInfo{acc, budget}, nil
 }
 
-func getBillingBudgetAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBillingBudgetAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Get project details
 

@@ -170,7 +170,7 @@ func tableGcpArtifactRegistryRepository(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listArtifactRegistryRepositories(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listArtifactRegistryRepositories(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	region := d.EqualsQualString("location")
 
 	var location string
@@ -238,7 +238,7 @@ func listArtifactRegistryRepositories(ctx context.Context, d *plugin.QueryData, 
 
 //// HYDRATE FUNCTIONS
 
-func getArtifactRegistryRepository(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getArtifactRegistryRepository(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ArtifactRegistryService(ctx, d)
 	if err != nil {
@@ -271,7 +271,7 @@ func getArtifactRegistryRepository(ctx context.Context, d *plugin.QueryData, h *
 	return resp, nil
 }
 
-func artifactRegistryRepositorySelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func artifactRegistryRepositorySelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*artifactregistry.Repository)
 
 	var location string
@@ -291,7 +291,7 @@ func artifactRegistryRepositorySelfLink(ctx context.Context, d *plugin.QueryData
 
 //// TRANSFORM FUNCTIONS
 
-func artifactRegistryRepositoryData(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func artifactRegistryRepositoryData(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := h.HydrateItem.(*artifactregistry.Repository)
 	param := h.Param.(string)
 
@@ -299,7 +299,7 @@ func artifactRegistryRepositoryData(ctx context.Context, h *transform.TransformD
 	name := strings.Split(data.Name, "/")[5]
 	location := strings.Split(data.Name, "/")[3]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectID,
 		"Title":    name,
 		"Location": location,

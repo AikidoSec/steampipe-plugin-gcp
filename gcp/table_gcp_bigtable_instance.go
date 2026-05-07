@@ -113,7 +113,7 @@ func tableGcpBigtableInstance(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listBigtableInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listBigtableInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listBigtableInstances")
 
 	// Create Service Connection
@@ -148,7 +148,7 @@ func listBigtableInstances(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// HYDRATE FUNCTIONS
 
-func getBigtableInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBigtableInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := BigtableAdminService(ctx, d)
 	if err != nil {
@@ -178,7 +178,7 @@ func getBigtableInstance(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	return resp, nil
 }
 
-func getBigtableInstanceIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBigtableInstanceIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := BigtableAdminService(ctx, d)
 	if err != nil {
@@ -203,14 +203,14 @@ func getBigtableInstanceIamPolicy(ctx context.Context, d *plugin.QueryData, h *p
 
 //// TRANSFORM FUNCTIONS
 
-func bigtableInstanceTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func bigtableInstanceTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	instance := d.HydrateItem.(*bigtableadmin.Instance)
 	param := d.Param.(string)
 
 	// get the resource title
 	project := strings.Split(instance.Name, "/")[1]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://bigtableadmin.googleapis.com/" + instance.Name},
 	}
@@ -218,7 +218,7 @@ func bigtableInstanceTurbotData(_ context.Context, d *transform.TransformData) (
 	return turbotData[param], nil
 }
 
-func bigtableInstanceSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func bigtableInstanceSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*bigtableadmin.Instance)
 	selfLink := "https://bigtableadmin.googleapis.com/v2/" + data.Name
 

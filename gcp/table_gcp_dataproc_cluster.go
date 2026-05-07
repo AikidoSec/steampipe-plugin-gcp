@@ -124,7 +124,7 @@ func tableGcpDataprocCluster(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDataprocClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDataprocClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -196,7 +196,7 @@ func listDataprocClusters(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getDataprocCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDataprocCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -236,7 +236,7 @@ func getDataprocCluster(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// TRANSFORM FUNCTION
 
-func gcpDataprocClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpDataprocClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	cluster := h.Item.(*dataproc.Cluster)
 
 	project := cluster.ProjectId
@@ -247,7 +247,7 @@ func gcpDataprocClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *p
 		location = matrixLocation
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  project,
 		"Location": location,
 		"Akas":     []string{"gcp://dataproc.googleapis.com/projects/" + project + "/regions/" + location + "/clusters/" + cluster.ClusterName},
@@ -256,7 +256,7 @@ func gcpDataprocClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *p
 	return turbotData, nil
 }
 
-func dataprocClusterSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func dataprocClusterSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*dataproc.Cluster)
 
 	var location string

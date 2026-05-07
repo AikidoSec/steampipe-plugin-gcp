@@ -46,7 +46,7 @@ const (
 
 //// TRANSFORM FUNCTIONS
 
-func lastPathElement(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func lastPathElement(_ context.Context, d *transform.TransformData) (any, error) {
 	return getLastPathElement(types.SafeString(d.Value)), nil
 }
 
@@ -55,7 +55,7 @@ func lastPathElement(_ context.Context, d *transform.TransformData) (interface{}
 var getProjectMemoized = plugin.HydrateFunc(getProjectUncached).Memoize(memoize.WithCacheKeyFunction(getProjectCacheKey))
 
 // Build a cache key for the call to getProject.
-func getProjectCacheKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectCacheKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	key := fmt.Sprintf("getGCPProjectInfo%s", "")
 	return key, nil
 }
@@ -69,7 +69,7 @@ func getProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 	return projectId, nil
 }
 
-func getProjectUncached(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectUncached(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var err error
 	var projectData *projectInfo
 	projectData, err = activeProject(ctx, d)
@@ -172,7 +172,7 @@ func getProjectFromConfig(connection *plugin.Connection) string {
 	return ""
 }
 
-func base64DecodedData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func base64DecodedData(_ context.Context, d *transform.TransformData) (any, error) {
 	data, err := base64.StdEncoding.DecodeString(types.SafeString(d.Value))
 	// check if CorruptInputError or invalid UTF-8
 	if err != nil {
@@ -417,7 +417,7 @@ var GcpFilterOperatorMap = map[string]string{
 	">=": ">", // Filter ((property=value) OR (property>value))
 }
 
-func extractLastPartSeparatedByBackslash(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func extractLastPartSeparatedByBackslash(ctx context.Context, d *transform.TransformData) (any, error) {
 	data := types.SafeString(d.Value)
 
 	if data == "" {

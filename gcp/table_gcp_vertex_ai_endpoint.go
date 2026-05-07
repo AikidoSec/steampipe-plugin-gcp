@@ -148,7 +148,7 @@ func tableGcpVertexAIEndpoint(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listAIPlatformEndpoints(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listAIPlatformEndpoints(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	region := d.EqualsQualString("location")
@@ -227,7 +227,7 @@ func listAIPlatformEndpoints(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// HYDRATE FUNCTIONS
 
-func getAIPlatformEndpoint(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getAIPlatformEndpoint(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
@@ -273,19 +273,19 @@ func getAIPlatformEndpoint(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 /// TRANSFORM FUNCTIONS
 
-func gcpAIPlatformTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpAIPlatformTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	param := d.Param.(string)
 	AIData := d.HydrateItem.(*aiplatformpb.Endpoint)
 	akas := []string{"gcp://aiplatform.googleapis.com/" + AIData.Name}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Location": strings.Split(AIData.Name, "/")[3],
 		"Akas":     akas,
 	}
 	return turbotData[param], nil
 }
 
-func convertTimestamppbAsTime(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func convertTimestamppbAsTime(ctx context.Context, d *transform.TransformData) (any, error) {
 	v := d.Value
 	if v != nil {
 		timeValue := v.(*timestamppb.Timestamp)

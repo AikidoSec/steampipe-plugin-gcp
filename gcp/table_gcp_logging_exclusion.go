@@ -93,7 +93,7 @@ func tableGcpLoggingExclusion(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpLoggingExclusions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpLoggingExclusions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := LoggingService(ctx, d)
 	if err != nil {
@@ -146,7 +146,7 @@ func listGcpLoggingExclusions(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getGcpLoggingExclusion(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpLoggingExclusion(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpLoggingExclusion")
 
 	// Create Service Connection
@@ -179,7 +179,7 @@ func getGcpLoggingExclusion(ctx context.Context, d *plugin.QueryData, h *plugin.
 	return op, nil
 }
 
-func exclusionNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func exclusionNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	exclusion := h.Item.(*logging.LogExclusion)
 
 	// Get project details

@@ -77,7 +77,7 @@ func tableGcpProjectService(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpProjectServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpProjectServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ServiceUsageService(ctx, d)
 	if err != nil {
@@ -135,7 +135,7 @@ func listGcpProjectServices(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTIONS
 
-func getGcpProjectService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpProjectService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpProjectService")
 
 	// Create Service Connection
@@ -163,7 +163,7 @@ func getGcpProjectService(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTIONS
 
-func projectServiceNameToAkas(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func projectServiceNameToAkas(_ context.Context, d *transform.TransformData) (any, error) {
 	service := d.HydrateItem.(*serviceusage.GoogleApiServiceusageV1Service)
 	akas := []string{"gcp://serviceusage.googleapis.com/" + service.Name}
 

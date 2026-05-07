@@ -145,7 +145,7 @@ func tableGcpDataplexZone(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDataplexZones(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDataplexZones(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	lake := h.Item.(*dataplex.GoogleCloudDataplexV1Lake)
 
 	lakeName := d.EqualsQualString("lake_name")
@@ -207,7 +207,7 @@ func listDataplexZones(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 //// HYDRATE FUNCTIONS
 
-func getDataplexZone(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDataplexZone(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -249,7 +249,7 @@ func getDataplexZone(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	return resp, nil
 }
 
-func gcpDataplexZoneTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpDataplexZoneTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	zone := h.Item.(*dataplex.GoogleCloudDataplexV1Zone)
 	splitName := strings.Split(zone.Name, "/")
 
@@ -259,7 +259,7 @@ func gcpDataplexZoneTurbotData(ctx context.Context, d *plugin.QueryData, h *plug
 		return nil, err
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectId,
 		"Location": splitName[3],
 		"Akas":     []string{"gcp://dataplex.googleapis.com/" + zone.Name},
@@ -268,7 +268,7 @@ func gcpDataplexZoneTurbotData(ctx context.Context, d *plugin.QueryData, h *plug
 	return turbotData, nil
 }
 
-func dataplexZoneSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func dataplexZoneSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*dataplex.GoogleCloudDataplexV1Zone)
 
 	selfLink := "https://dataplex.googleapis.com/v1/" + data.Name
@@ -278,7 +278,7 @@ func dataplexZoneSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTION
 
-func dataplexLakeName(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func dataplexLakeName(ctx context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*dataplex.GoogleCloudDataplexV1Zone)
 	lakeName := strings.Split(data.Name, "/zones")[0]
 

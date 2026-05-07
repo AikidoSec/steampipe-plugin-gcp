@@ -10,17 +10,17 @@ import (
 	"google.golang.org/genproto/googleapis/cloud/location"
 )
 
-func BuildVertexAILocationListByClientType(clientType string) func(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
+func BuildVertexAILocationListByClientType(clientType string) func(ctx context.Context, d *plugin.QueryData) []map[string]any {
 	return BuildVertexAILocationList(clientType)
 }
 
-func BuildVertexAILocationList(clientType string) func(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
-	return func(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
+func BuildVertexAILocationList(clientType string) func(ctx context.Context, d *plugin.QueryData) []map[string]any {
+	return func(ctx context.Context, d *plugin.QueryData) []map[string]any {
 		// have we already created and cached the locations?
 		locationCacheKey := "BuildVertexAILocationList" + clientType
 		if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
-			plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
-			return cachedData.([]map[string]interface{})
+			plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]any))
+			return cachedData.([]map[string]any)
 		}
 
 		// Create Service Connection
@@ -63,9 +63,9 @@ func BuildVertexAILocationList(clientType string) func(ctx context.Context, d *p
 		}
 
 		// validate location list
-		matrix := make([]map[string]interface{}, len(resourceLocations))
+		matrix := make([]map[string]any, len(resourceLocations))
 		for i, location := range resourceLocations {
-			matrix[i] = map[string]interface{}{matrixKeyLocation: location.LocationId}
+			matrix[i] = map[string]any{matrixKeyLocation: location.LocationId}
 		}
 		d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 		return matrix

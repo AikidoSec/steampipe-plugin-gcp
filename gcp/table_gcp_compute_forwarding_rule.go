@@ -211,7 +211,7 @@ func tableGcpComputeForwardingRule(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeForwardingRules(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeForwardingRules(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Create Service Connection
 	service, err := ComputeBetaService(ctx, d)
@@ -279,7 +279,7 @@ func listComputeForwardingRules(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// HYDRATE FUNCTIONS
 
-func getComputeForwardingRule(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeForwardingRule(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeBetaService(ctx, d)
 	if err != nil {
@@ -322,14 +322,14 @@ func getComputeForwardingRule(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// TRANSFORM FUNCTIONS
 
-func forwardingRuleSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func forwardingRuleSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	forwardingRule := d.HydrateItem.(*compute.ForwardingRule)
 	param := d.Param.(string)
 
 	project := strings.Split(forwardingRule.SelfLink, "/")[6]
 	region := getLastPathElement(types.SafeString(forwardingRule.Region))
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/forwardingRules/" + forwardingRule.Name},
 	}

@@ -103,7 +103,7 @@ func tableDnsPolicy(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDnsPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDnsPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listDnsPolicies")
 
 	// Create Service Connection
@@ -155,7 +155,7 @@ func listDnsPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 //// HYDRATE FUNCTIONS
 
-func getDnsPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getDnsPolicy")
 
 	// Create Service Connection
@@ -185,7 +185,7 @@ func getDnsPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	return resp, nil
 }
 
-func getDnsPolicyAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsPolicyAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*dns.Policy)
 
 	// Get project details

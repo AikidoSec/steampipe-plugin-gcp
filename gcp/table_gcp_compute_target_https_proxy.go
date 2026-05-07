@@ -142,7 +142,7 @@ func tableGcpComputeTargetHttpsProxy(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeTargetHttpsProxies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeTargetHttpsProxies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeTargetHttpsProxies")
 
 	// Create Service Connection
@@ -206,7 +206,7 @@ func listComputeTargetHttpsProxies(ctx context.Context, d *plugin.QueryData, h *
 
 //// HYDRATE FUNCTIONS
 
-func getComputeTargetHttpsProxy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeTargetHttpsProxy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeTargetHttpsProxy")
 
 	// Create Service Connection
@@ -247,7 +247,7 @@ func getComputeTargetHttpsProxy(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeTargetHttpsProxyAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeTargetHttpsProxyAka(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.TargetHttpsProxy)
 	region := getLastPathElement(types.SafeString(data.Region))
 	project := strings.Split(data.SelfLink, "/")[6]
@@ -261,7 +261,7 @@ func gcpComputeTargetHttpsProxyAka(_ context.Context, d *transform.TransformData
 	return akas, nil
 }
 
-func gcpComputeTargetHttpsProxyLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeTargetHttpsProxyLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.TargetHttpsProxy)
 	param := d.Param.(string)
 

@@ -106,7 +106,7 @@ func tableGcpLoggingBucket(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listLoggingBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listLoggingBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listLoggingBuckets")
 
 	// Create service connection
@@ -162,7 +162,7 @@ func listLoggingBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getLoggingBucket(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getLoggingBucket(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getLoggingBucket")
 
 	// Create Service Connection
@@ -200,14 +200,14 @@ func getLoggingBucket(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// TRANSFORM FUNCTIONS
 
-func loggingBucketTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func loggingBucketTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*logging.LogBucket)
 	param := d.Param.(string)
 
 	// Fetch data from name
 	splittedTitle := strings.Split(data.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  splittedTitle[1],
 		"Location": splittedTitle[3],
 		"SelfLink": "https://logging.googleapis.com/v2/" + data.Name,

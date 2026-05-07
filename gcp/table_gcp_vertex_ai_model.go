@@ -218,7 +218,7 @@ func tableGcpVertexAIModel(ctx context.Context) *plugin.Table {
 	}
 }
 
-func listAIPlatformModels(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listAIPlatformModels(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	region := d.EqualsQualString("location")
@@ -296,7 +296,7 @@ func listAIPlatformModels(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getAIPlatformModel(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getAIPlatformModel(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
@@ -347,12 +347,12 @@ func getAIPlatformModel(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 /// TRANSFORM FUNCTIONS
 
-func gcpModelStandard(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpModelStandard(ctx context.Context, d *transform.TransformData) (any, error) {
 	param := d.Param.(string)
 	AIData := d.HydrateItem.(*aiplatformpb.Model)
 	akas := []string{"gcp://aiplatform.googleapis.com/" + AIData.Name}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Location": strings.Split(AIData.Name, "/")[3],
 		"Akas":     akas,
 	}

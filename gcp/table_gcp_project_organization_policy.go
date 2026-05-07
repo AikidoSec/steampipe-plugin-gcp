@@ -99,7 +99,7 @@ func tableGcpProjectOrganizationPolicy(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listProjectOrganizationPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listProjectOrganizationPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudResourceManagerService(ctx, d)
 	if err != nil {
@@ -152,7 +152,7 @@ func listProjectOrganizationPolicies(ctx context.Context, d *plugin.QueryData, h
 
 //// HYDRATE FUNCTIONS
 
-func getProjectOrganizationPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectOrganizationPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getProjectOrganizationPolicy")
 
 	// Create Service Connection
@@ -182,7 +182,7 @@ func getProjectOrganizationPolicy(ctx context.Context, d *plugin.QueryData, h *p
 	return req, nil
 }
 
-func getOrganizationPolicyAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getOrganizationPolicyAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 
 	projectId, err := getProject(ctx, d, h)

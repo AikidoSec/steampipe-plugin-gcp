@@ -19,7 +19,7 @@ func tableGcpBillingAccount(_ context.Context) *plugin.Table {
 		List: &plugin.ListConfig{
 			KeyColumns: plugin.OptionalColumns([]string{"name"}),
 			Hydrate:    getBillingAccount,
-			Tags:    map[string]string{"service": "billing", "action": "accounts.get"},
+			Tags:       map[string]string{"service": "billing", "action": "accounts.get"},
 		},
 		Columns: []*plugin.Column{
 			{
@@ -86,7 +86,7 @@ func tableGcpBillingAccount(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func getBillingAccount(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBillingAccount(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Create Service Connection
 	service, err := BillingService(ctx, d)
@@ -137,7 +137,7 @@ func getBillingAccount(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	return nil, nil
 }
 
-func getBillingAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBillingAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	acc := h.Item.(*cloudbilling.BillingAccount)
 
 	// Create Service Connection
@@ -156,7 +156,7 @@ func getBillingAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plu
 	return policy, nil
 }
 
-func getBillingAccountAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBillingAccountAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	acc := h.Item.(*cloudbilling.BillingAccount)
 	akas := []string{"gcp://cloudbilling.googleapis.com/" + acc.Name}
 

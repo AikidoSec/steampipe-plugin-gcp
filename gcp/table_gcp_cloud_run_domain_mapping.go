@@ -216,7 +216,7 @@ func tableGcpCloudRunDomainMapping(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCloudRunDomainMappings(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudRunDomainMappings(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	region := d.EqualsQualString("location")
 
 	var location string
@@ -302,7 +302,7 @@ func listCloudRunDomainMappings(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// HYDRATE FUNCTIONS
 
-func getCloudRunDomainMapping(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunDomainMapping(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudRunServiceV1(ctx, d)
 	if err != nil {
@@ -342,11 +342,11 @@ func getCloudRunDomainMapping(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunDomainMappingData(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func cloudRunDomainMappingData(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := h.HydrateItem.(*cloudRunDomainMappingInfo)
 	param := h.Param.(string)
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Akas": []string{"gcp://run.googleapis.com/projects/" + data.Project + "/locations/" + data.Location + "/domainmappings/" + data.Metadata.Name},
 	}
 

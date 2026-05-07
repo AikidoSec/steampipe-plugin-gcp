@@ -68,7 +68,7 @@ func tableGcpComputeSecurityPolicy(ctx context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpComputeSecurityPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpComputeSecurityPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -123,7 +123,7 @@ func listGcpComputeSecurityPolicies(ctx context.Context, d *plugin.QueryData, h 
 
 //// HYDRATE FUNCTIONS
 
-func getGcpComputeSecurityPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpComputeSecurityPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -200,7 +200,7 @@ func buildComputeSecurityPolicyFilterParam(equalQuals plugin.KeyColumnQualMap) s
 
 ////  TRANSFORM FUNCTION
 
-func securityPolicyTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func securityPolicyTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.SecurityPolicy)
 	project := ""
 	if data.SelfLink != "" {
@@ -209,7 +209,7 @@ func securityPolicyTurbotData(_ context.Context, d *transform.TransformData) (in
 			project = parts[6]
 		}
 	}
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/securityPolicies/" + data.Name},
 	}

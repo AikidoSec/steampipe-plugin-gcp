@@ -121,7 +121,7 @@ func tableGcpComputeTargetVpnGateway(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeTargetVpnGateways(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeTargetVpnGateways(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeTargetVpnGateways")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -179,7 +179,7 @@ func listComputeTargetVpnGateways(ctx context.Context, d *plugin.QueryData, h *p
 
 //// HYDRATE FUNCTIONS
 
-func getComputeTargetVpnGateway(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeTargetVpnGateway(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -225,14 +225,14 @@ func getComputeTargetVpnGateway(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeTargetVpnGatewayTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeTargetVpnGatewayTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	targetVpnGateway := d.HydrateItem.(*compute.TargetVpnGateway)
 	param := d.Param.(string)
 
 	region := getLastPathElement(types.SafeString(targetVpnGateway.Region))
 	project := strings.Split(targetVpnGateway.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/targetVpnGateways/" + targetVpnGateway.Name},
 	}

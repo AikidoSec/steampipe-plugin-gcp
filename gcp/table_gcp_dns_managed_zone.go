@@ -168,7 +168,7 @@ func tableGcpDnsManagedZone(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDnsManagedZones(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDnsManagedZones(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listDnsManagedZones")
 
 	// Create Service Connection
@@ -220,7 +220,7 @@ func listDnsManagedZones(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTIONS
 
-func getDnsManagedZone(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsManagedZone(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getDnsManagedZone")
 
 	// Create Service Connection
@@ -251,7 +251,7 @@ func getDnsManagedZone(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	return nil, nil
 }
 
-func getDnsManagedZoneAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsManagedZoneAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*dns.ManagedZone)
 
 	// Get project details
@@ -267,7 +267,7 @@ func getDnsManagedZoneAka(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return akas, nil
 }
 
-func getDnsZoneSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsZoneSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	zone := h.Item.(*dns.ManagedZone)
 
 	// Get project details

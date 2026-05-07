@@ -105,7 +105,7 @@ func tableGcpCloudAsset(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCloudAssets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudAssets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Create Service Connection
 	service, err := CloudAssetService(ctx, d)

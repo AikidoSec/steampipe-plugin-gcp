@@ -205,7 +205,7 @@ func tableGcpComputeInstanceGroupManager(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listComputeInstanceGroupManager(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeInstanceGroupManager(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Max limit is set as per documentation
 	pageSize := types.Int64(500)
 	limit := d.QueryContext.Limit
@@ -255,7 +255,7 @@ func listComputeInstanceGroupManager(ctx context.Context, d *plugin.QueryData, h
 
 //// HYDRATE FUNCTIONS
 
-func getComputeInstanceGroupManager(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeInstanceGroupManager(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 	projectId, err := getProject(ctx, d, h)
 	if err != nil {
@@ -297,7 +297,7 @@ func getComputeInstanceGroupManager(ctx context.Context, d *plugin.QueryData, h 
 
 //// TRANSFORM FUNCTIONS
 
-func instanceGroupManagerAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func instanceGroupManagerAka(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.InstanceGroupManager)
 
 	zoneName := getLastPathElement(types.SafeString(i.Zone))
@@ -315,7 +315,7 @@ func instanceGroupManagerAka(_ context.Context, d *transform.TransformData) (int
 	return akas, nil
 }
 
-func instanceGroupManagerLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func instanceGroupManagerLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.InstanceGroupManager)
 	param := d.Param.(string)
 

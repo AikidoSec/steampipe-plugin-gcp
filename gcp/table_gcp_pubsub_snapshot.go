@@ -113,7 +113,7 @@ func tableGcpPubSubSnapshot(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listPubSubSnapshots(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listPubSubSnapshots(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := PubsubService(ctx, d)
 	if err != nil {
@@ -163,7 +163,7 @@ func listPubSubSnapshots(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTIONS
 
-func getPubSubSnapshot(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getPubSubSnapshot(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getPubSubSnapshot")
 
 	// Create Service Connection
@@ -188,7 +188,7 @@ func getPubSubSnapshot(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	return req, nil
 }
 
-func getPubSubSnapshotIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getPubSubSnapshotIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getPubSubSnapshotIamPolicy")
 
 	// Create Service Connection
@@ -208,14 +208,14 @@ func getPubSubSnapshotIamPolicy(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// TRANSFORM FUNCTIONS
 
-func snapshotNameToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func snapshotNameToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	snapshot := d.HydrateItem.(*pubsub.Snapshot)
 	param := d.Param.(string)
 
 	// get the resource title
 	splittedTitle := strings.Split(snapshot.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": splittedTitle[1],
 		"Akas":    []string{"gcp://pubsub.googleapis.com/" + snapshot.Name},
 	}
@@ -223,7 +223,7 @@ func snapshotNameToTurbotData(_ context.Context, d *transform.TransformData) (in
 	return turbotData[param], nil
 }
 
-func pubsubSnapshotSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func pubsubSnapshotSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*pubsub.Snapshot)
 	selfLink := "https://pubsub.googleapis.com/v1/" + data.Name
 

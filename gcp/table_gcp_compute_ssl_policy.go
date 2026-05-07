@@ -148,7 +148,7 @@ func tableGcpComputeSslPolicy(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeSslPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeSslPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeSslPolicies")
 
 	// Create Service Connection
@@ -234,7 +234,7 @@ func listComputeSslPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTIONS
 
-func getComputeSslPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeSslPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeSslPolicy")
 
 	// Create Service Connection
@@ -285,7 +285,7 @@ func getComputeSslPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// TRANSFORM FUNCTIONS
 
-func computeSslPolicyTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func computeSslPolicyTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.SslPolicy)
 	param := d.Param.(string)
 
@@ -299,7 +299,7 @@ func computeSslPolicyTurbotData(_ context.Context, d *transform.TransformData) (
 		akas = []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + location + "/sslPolicies/" + data.Name}
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    akas,
 	}

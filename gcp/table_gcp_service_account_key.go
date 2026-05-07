@@ -124,7 +124,7 @@ func tableGcpServiceAccountKey(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpServiceAccountKeys(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpServiceAccountKeys(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Fetch Service Account details
 	serviceAccount := h.Item.(*iam.ServiceAccount)
 
@@ -150,7 +150,7 @@ func listGcpServiceAccountKeys(ctx context.Context, d *plugin.QueryData, h *plug
 
 //// HYDRATE FUNCTIONS
 
-func getGcpServiceAccountKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpServiceAccountKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpServiceAccountKey")
 
 	var name, serviceAccountName string
@@ -195,7 +195,7 @@ func getGcpServiceAccountKey(ctx context.Context, d *plugin.QueryData, h *plugin
 	return op, nil
 }
 
-func getGcpServiceAccountKeyPublicKeyDataWithRawFormat(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpServiceAccountKeyPublicKeyDataWithRawFormat(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	var name, serviceAccountName string
 	data := h.Item.(*iam.ServiceAccountKey)
@@ -231,7 +231,7 @@ func getGcpServiceAccountKeyPublicKeyDataWithRawFormat(ctx context.Context, d *p
 
 /// TRANSFORM FUNCTIONS
 
-func getGcpServiceAccountKeyTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func getGcpServiceAccountKeyTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpServiceAccountKeyTurbotData")
 	serviceAccountKey := d.HydrateItem.(*iam.ServiceAccountKey)
 

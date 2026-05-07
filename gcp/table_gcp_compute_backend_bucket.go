@@ -121,7 +121,7 @@ func tableGcpComputeBackendBucket(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeBackendBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeBackendBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeBackendBuckets")
 
 	// Create Service Connection
@@ -184,7 +184,7 @@ func listComputeBackendBuckets(ctx context.Context, d *plugin.QueryData, h *plug
 
 //// HYDRATE FUNCTIONS
 
-func getComputeBackendBucket(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeBackendBucket(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -217,13 +217,13 @@ func getComputeBackendBucket(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func backendBucketSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func backendBucketSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	backendBucket := d.HydrateItem.(*compute.BackendBucket)
 	param := d.Param.(string)
 
 	project := strings.Split(backendBucket.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/backendBuckets/" + backendBucket.Name},
 	}

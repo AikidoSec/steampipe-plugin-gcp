@@ -110,7 +110,7 @@ func tableGcpCloudIdentityGroupMembership(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listCloudIdentityGroupMemberships(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudIdentityGroupMemberships(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	groupName := d.EqualsQualString("group_name")
 
@@ -158,7 +158,7 @@ func listCloudIdentityGroupMemberships(ctx context.Context, d *plugin.QueryData,
 
 //// HYDRATE FUNCTIONS
 
-func getCloudIdentityGroupMembership(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudIdentityGroupMembership(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	name := d.EqualsQualString("name")
 	groupName := d.EqualsQualString("group_name")
@@ -186,14 +186,14 @@ func getCloudIdentityGroupMembership(ctx context.Context, d *plugin.QueryData, h
 
 /// TRANSFORM FUNCTIONS
 
-func gcpCloudIdentityGroupMembershipTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpCloudIdentityGroupMembershipTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	membership := d.HydrateItem.(*cloudidentity.Membership)
 	akas := []string{"gcp://cloudidentity.googleapis.com/" + membership.Name}
 
 	return akas, nil
 }
 
-func gcpCloudIdentityGroupName(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpCloudIdentityGroupName(ctx context.Context, d *transform.TransformData) (any, error) {
 	membership := d.HydrateItem.(*cloudidentity.Membership)
 	groupName := strings.Split(membership.Name, "/")[1]
 

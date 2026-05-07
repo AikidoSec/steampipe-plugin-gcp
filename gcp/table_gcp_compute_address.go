@@ -150,7 +150,7 @@ func tableGcpComputeAddress(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeAddresses(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeAddresses(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeAddresses")
 
 	// Create Service Connection
@@ -217,7 +217,7 @@ func listComputeAddresses(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getComputeAddress(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeAddress(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -264,14 +264,14 @@ func getComputeAddress(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 //// TRANSFORM FUNCTIONS
 
-func addressSelfLinkToTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func addressSelfLinkToTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	address := d.HydrateItem.(*compute.Address)
 
 	param := d.Param.(string)
 	region := getLastPathElement(types.SafeString(address.Region))
 	project := strings.Split(address.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/addresses/" + address.Name},
 	}

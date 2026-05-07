@@ -242,7 +242,7 @@ func tableGcpRedisInstance(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listGcpRedisInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpRedisInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	// Create Service Connection
@@ -298,7 +298,7 @@ func listGcpRedisInstances(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// HYDRATE FUNCTIONS
 
-func getGcpRedisInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpRedisInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	instanceName := d.EqualsQualString("name")
 
@@ -335,20 +335,20 @@ func getGcpRedisInstance(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 /// TRANSFORM FUNCTIONS
 
-func gcpRedisInstanceTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpRedisInstanceTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	instance := d.HydrateItem.(*redispb.Instance)
 	param := d.Param.(string)
 	akas := []string{"gcp://redis.googleapis.com/" + instance.Name}
 	locationId := strings.Split(instance.LocationId, "-")
 	location := strings.Join(locationId[:len(locationId)-1], "-")
-	data := make(map[string]interface{}, 0)
+	data := make(map[string]any, 0)
 	data["akas"] = akas
 	data["location"] = location
 
 	return data[param], nil
 }
 
-func gcpRedisInstanceCreateTime(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpRedisInstanceCreateTime(_ context.Context, d *transform.TransformData) (any, error) {
 	instanceCreateTime := d.HydrateItem.(*redispb.Instance).CreateTime
 	if instanceCreateTime == nil {
 		return nil, nil

@@ -149,7 +149,7 @@ func tableGcpComputeGlobalAddress(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeGlobalAddresses(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeGlobalAddresses(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -212,7 +212,7 @@ func listComputeGlobalAddresses(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// HYDRATE FUNCTIONS
 
-func getComputeGlobalAddress(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeGlobalAddress(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -245,13 +245,13 @@ func getComputeGlobalAddress(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func globalAddressSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func globalAddressSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	globalAddress := d.HydrateItem.(*compute.Address)
 	param := d.Param.(string)
 
 	project := strings.Split(globalAddress.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/addresses/" + globalAddress.Name},
 	}

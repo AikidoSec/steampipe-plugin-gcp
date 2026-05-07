@@ -242,7 +242,7 @@ func tableGcpBigQueryJob(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listBigQueryJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listBigQueryJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listBigQueryJobs")
 
 	// Create Service Connection
@@ -294,7 +294,7 @@ func listBigQueryJobs(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// HYDRATE FUNCTIONS
 
-func getBigQueryJob(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBigQueryJob(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := BigQueryService(ctx, d)
 	if err != nil {
@@ -332,7 +332,7 @@ func getBigQueryJob(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 //// TRANSFORM FUNCTIONS
 
-func bigQueryJobAka(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func bigQueryJobAka(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := jobID(h.HydrateItem)
 	projectID := strings.Split(data, ":")[0]
 	id := strings.Split(data, ".")[1]
@@ -342,7 +342,7 @@ func bigQueryJobAka(ctx context.Context, h *transform.TransformData) (interface{
 	return akas, nil
 }
 
-func jobID(item interface{}) string {
+func jobID(item any) string {
 	switch item := item.(type) {
 	case *bigquery.JobListJobs:
 		return item.Id

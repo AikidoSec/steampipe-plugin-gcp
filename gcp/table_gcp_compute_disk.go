@@ -269,7 +269,7 @@ func tableGcpComputeDisk(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listComputeDisk(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeDisk(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeDisk")
 
 	// Create Service Connection
@@ -334,7 +334,7 @@ func listComputeDisk(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 //// HYDRATE FUNCTIONS
 
-func getComputeDisk(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeDisk(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeDisk")
 
 	// Create Service Connection
@@ -375,7 +375,7 @@ func getComputeDisk(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	return &disk, nil
 }
 
-func getComputeDiskIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeDiskIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	disk := h.Item.(*compute.Disk)
 
 	// Create Service Connection
@@ -410,7 +410,7 @@ func getComputeDiskIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func diskAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func diskAka(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.Disk)
 
 	zoneName := getLastPathElement(types.SafeString(i.Zone))
@@ -427,7 +427,7 @@ func diskAka(_ context.Context, d *transform.TransformData) (interface{}, error)
 	return akas, nil
 }
 
-func diskLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func diskLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.Disk)
 	param := d.Param.(string)
 
@@ -449,7 +449,7 @@ func diskLocation(_ context.Context, d *transform.TransformData) (interface{}, e
 	return locationData[param], nil
 }
 
-func diskEncryptionKeyType(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func diskEncryptionKeyType(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.Disk)
 
 	if i.DiskEncryptionKey == nil {

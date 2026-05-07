@@ -115,7 +115,7 @@ func tableGcpComputeTargetSslProxy(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeTargetSslProxies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeTargetSslProxies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeTargetSslProxies")
 
 	// Create Service Connection
@@ -172,7 +172,7 @@ func listComputeTargetSslProxies(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// HYDRATE FUNCTIONS
 
-func getComputeTargetSslProxy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeTargetSslProxy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeTargetSslProxy")
 
 	// Create Service Connection
@@ -205,13 +205,13 @@ func getComputeTargetSslProxy(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// TRANSFORM FUNCTIONS
 
-func computeTargetSslProxyTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func computeTargetSslProxyTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.TargetSslProxy)
 	param := d.Param.(string)
 
 	project := strings.Split(data.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/targetSslProxies/" + data.Name},
 	}

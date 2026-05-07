@@ -144,7 +144,7 @@ func tableGcpComputeMachineType(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeMachineTypes(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeMachineTypes(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeMachineTypes")
 
 	zoneDetails := h.Item.(*compute.Zone)
@@ -205,7 +205,7 @@ func listComputeMachineTypes(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// HYDRATE FUNCTIONS
 
-func getComputeMachineType(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeMachineType(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeMachineType")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -237,13 +237,13 @@ func getComputeMachineType(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// TRANSFORM FUNCTIONS
 
-func machineTypeTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func machineTypeTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.MachineType)
 	param := d.Param.(string)
 
 	project := strings.Split(data.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/machineTypes/" + data.Name},
 	}

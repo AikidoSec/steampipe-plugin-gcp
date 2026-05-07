@@ -34,7 +34,7 @@ func tableGcpComputeInstanceMetricCpuUtilizationDaily(_ context.Context) *plugin
 
 //// LIST FUNCTION
 
-func listComputeInstanceMetricCpuUtilizationDaily(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeInstanceMetricCpuUtilizationDaily(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	instanceInfo := h.Item.(*compute.Instance)
 
 	location := getLastPathElement(instanceInfo.Zone)

@@ -207,7 +207,7 @@ func tableGcpComputeGlobalForwardingRule(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeGlobalForwardingRules(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeGlobalForwardingRules(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -273,7 +273,7 @@ func listComputeGlobalForwardingRules(ctx context.Context, d *plugin.QueryData, 
 
 //// HYDRATE FUNCTIONS
 
-func getComputeGlobalForwardingRule(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeGlobalForwardingRule(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -300,13 +300,13 @@ func getComputeGlobalForwardingRule(ctx context.Context, d *plugin.QueryData, h 
 
 //// TRANSFORM FUNCTIONS
 
-func globalForwardingRuleSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func globalForwardingRuleSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	globalForwardingRule := d.HydrateItem.(*compute.ForwardingRule)
 	param := d.Param.(string)
 
 	project := strings.Split(globalForwardingRule.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/forwardingRules/" + globalForwardingRule.Name},
 	}

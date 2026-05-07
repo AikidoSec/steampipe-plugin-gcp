@@ -244,7 +244,7 @@ func tableGcpComputeImage(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeImageProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeImageProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeImageProjects")
 
 	// Get project details
@@ -303,7 +303,7 @@ func listComputeImageProjects(ctx context.Context, d *plugin.QueryData, h *plugi
 	return nil, nil
 }
 
-func listImagesForProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listImagesForProject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	projectName := h.Item.(string)
 
 	// Create Service Connection
@@ -365,7 +365,7 @@ func listImagesForProject(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getComputeImage(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeImage(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -389,7 +389,7 @@ func getComputeImage(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	return req, nil
 }
 
-func getComputeImageIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeImageIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -424,14 +424,14 @@ func getComputeImageIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// TRANSFORM FUNCTIONS
 
-func computeImageSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func computeImageSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	image := d.HydrateItem.(*compute.Image)
 	param := d.Param.(string)
 
 	// get the resource title
 	project := strings.Split(image.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/images/" + image.Name},
 	}

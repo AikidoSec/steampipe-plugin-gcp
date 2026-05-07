@@ -128,7 +128,7 @@ func tableGcpMonitoringAlert(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listMonitoringAlertPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listMonitoringAlertPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := MonitoringService(ctx, d)
 	if err != nil {
@@ -189,7 +189,7 @@ func listMonitoringAlertPolicies(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// HYDRATE FUNCTIONS
 
-func getMonitoringAlertPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getMonitoringAlertPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getMonitoringAlertPolicy")
 
 	// Get project details
@@ -222,13 +222,13 @@ func getMonitoringAlertPolicy(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// TRANSFORM FUNCTIONS
 
-func monitoringAlertPolicyTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func monitoringAlertPolicyTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*monitoring.AlertPolicy)
 	param := d.Param.(string)
 
 	splittedData := strings.Split(data.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": splittedData[1],
 		"Akas":    []string{"gcp://monitoring.googleapis.com/" + data.Name},
 	}

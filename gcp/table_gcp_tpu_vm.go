@@ -188,7 +188,7 @@ func tableGcpTpuVM(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listTpuVMs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listTpuVMs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := TPUService(ctx, d)
 	if err != nil {
@@ -227,7 +227,7 @@ func listTpuVMs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 //// HYDRATE FUNCTIONS
 
-func getTpuVM(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getTpuVM(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := TPUService(ctx, d)
 	if err != nil {
@@ -251,7 +251,7 @@ func getTpuVM(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (
 
 //// TRANSFORM FUNCTIONS
 
-func gcpTpuVMTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpTpuVMTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	node := d.HydrateItem.(*tpu.Node)
 	param := d.Param.(string)
 
@@ -265,7 +265,7 @@ func gcpTpuVMTurbotData(_ context.Context, d *transform.TransformData) (interfac
 	project := parts[1]
 	zone := parts[3]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Zone":    zone,
 		"Akas":    []string{"gcp://tpu.googleapis.com/" + node.Name},

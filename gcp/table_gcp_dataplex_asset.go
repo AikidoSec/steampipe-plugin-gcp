@@ -158,7 +158,7 @@ func tableGcpDataplexAsset(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDataplexAssets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDataplexAssets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	zoneName := d.EqualsQualString("zone_name")
 	if zoneName == "" {
@@ -218,7 +218,7 @@ func listDataplexAssets(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getDataplexAsset(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDataplexAsset(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	name := d.EqualsQualString("name")
 
@@ -242,7 +242,7 @@ func getDataplexAsset(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	return resp, nil
 }
 
-func gcpDataplexAssetTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpDataplexAssetTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	asset := h.Item.(*dataplex.GoogleCloudDataplexV1Asset)
 	splitName := strings.Split(asset.Name, "/")
 
@@ -252,7 +252,7 @@ func gcpDataplexAssetTurbotData(ctx context.Context, d *plugin.QueryData, h *plu
 		return nil, err
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectId,
 		"Location": splitName[3],
 		"Akas":     []string{"gcp://dataplex.googleapis.com/" + asset.Name},
@@ -261,7 +261,7 @@ func gcpDataplexAssetTurbotData(ctx context.Context, d *plugin.QueryData, h *plu
 	return turbotData, nil
 }
 
-func dataplexAssetSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func dataplexAssetSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*dataplex.GoogleCloudDataplexV1Asset)
 
 	selfLink := "https://dataplex.googleapis.com/v1/" + data.Name
@@ -271,14 +271,14 @@ func dataplexAssetSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// TRANSFORM FUNCTION
 
-func dataplexZoneNameForAsset(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func dataplexZoneNameForAsset(ctx context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*dataplex.GoogleCloudDataplexV1Asset)
 	lakeName := strings.Split(data.Name, "/assets")[0]
 
 	return lakeName, nil
 }
 
-func dataplexLakeNameForAsset(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func dataplexLakeNameForAsset(ctx context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*dataplex.GoogleCloudDataplexV1Asset)
 	lakeName := strings.Split(data.Name, "/zones")[0]
 

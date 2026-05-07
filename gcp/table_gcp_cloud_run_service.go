@@ -257,7 +257,7 @@ func tableGcpCloudRunService(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCloudRunServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudRunServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	region := d.EqualsQualString("location")
 
 	var location string
@@ -324,7 +324,7 @@ func listCloudRunServices(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getCloudRunService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudRunService(ctx, d)
 	if err != nil {
@@ -358,7 +358,7 @@ func getCloudRunService(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return resp, err
 }
 
-func getCloudRunServiceIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunServiceIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	data := h.Item.(*run.GoogleCloudRunV2Service)
 	serviceName := strings.Split(data.Name, "/")[5]
@@ -392,7 +392,7 @@ func getCloudRunServiceIamPolicy(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunServiceSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func cloudRunServiceSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*run.GoogleCloudRunV2Service)
 
 	var location string
@@ -412,7 +412,7 @@ func cloudRunServiceSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunServiceData(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func cloudRunServiceData(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := h.HydrateItem.(*run.GoogleCloudRunV2Service)
 	param := h.Param.(string)
 
@@ -420,7 +420,7 @@ func cloudRunServiceData(ctx context.Context, h *transform.TransformData) (inter
 	name := strings.Split(data.Name, "/")[5]
 	location := strings.Split(data.Name, "/")[3]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectID,
 		"Title":    name,
 		"Location": location,

@@ -85,7 +85,7 @@ func tableGcpMonitoringGroup(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listMonitoringGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listMonitoringGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := MonitoringService(ctx, d)
 	if err != nil {
@@ -136,7 +136,7 @@ func listMonitoringGroup(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTIONS
 
-func getMonitoringGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getMonitoringGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getMonitoringGroup")
 
 	// Get project details
@@ -169,7 +169,7 @@ func getMonitoringGroup(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// TRANSFORM FUNCTIONS
 
-func groupInfoToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func groupInfoToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	group := d.HydrateItem.(*monitoring.Group)
 	param := d.Param.(string)
 
@@ -183,7 +183,7 @@ func groupInfoToTurbotData(_ context.Context, d *transform.TransformData) (inter
 		title = splittedTitle[len(splittedTitle)-1]
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": splittedTitle[1],
 		"Title":   title,
 		"Akas":    []string{"gcp://monitoring.googleapis.com/" + group.Name},

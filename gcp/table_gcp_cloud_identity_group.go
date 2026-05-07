@@ -125,7 +125,7 @@ func tableGcpCloudIdentityGroup(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listCloudIdentityGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudIdentityGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	parent := d.EqualsQualString("parent")
 
@@ -174,7 +174,7 @@ func listCloudIdentityGroups(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// HYDRATE FUNCTIONS
 
-func getCloudIdentityGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudIdentityGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	name := d.EqualsQualString("name")
 
@@ -201,7 +201,7 @@ func getCloudIdentityGroup(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 /// TRANSFORM FUNCTIONS
 
-func gcpCloudIdentityGroupTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpCloudIdentityGroupTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	group := d.HydrateItem.(*cloudidentity.Group)
 	akas := []string{"gcp://cloudidentity.googleapis.com/" + group.Name}
 

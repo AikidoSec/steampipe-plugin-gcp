@@ -120,7 +120,7 @@ func tableGcpMonitoringNotificationChannel(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpMonitoringNotificationChannels(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpMonitoringNotificationChannels(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := MonitoringService(ctx, d)
 	if err != nil {
@@ -184,7 +184,7 @@ func listGcpMonitoringNotificationChannels(ctx context.Context, d *plugin.QueryD
 
 //// HYDRATE FUNCTIONS
 
-func getGcpMonitoringNotificationChannel(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpMonitoringNotificationChannel(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpMonitoringNotificationChannel")
 
 	// Get project details
@@ -213,7 +213,7 @@ func getGcpMonitoringNotificationChannel(ctx context.Context, d *plugin.QueryDat
 
 //// TRANSFORM FUNCTIONS
 
-func notificationChannelNameToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func notificationChannelNameToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	notificationChannel := d.HydrateItem.(*monitoring.NotificationChannel)
 	param := d.Param.(string)
 
@@ -227,7 +227,7 @@ func notificationChannelNameToTurbotData(_ context.Context, d *transform.Transfo
 		title = splittedTitle[len(splittedTitle)-1]
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": splittedTitle[1],
 		"Title":   title,
 		"Akas":    []string{"gcp://monitoring.googleapis.com/" + notificationChannel.Name},
@@ -235,7 +235,7 @@ func notificationChannelNameToTurbotData(_ context.Context, d *transform.Transfo
 	return turbotData[param], nil
 }
 
-func notificationChannelSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func notificationChannelSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*monitoring.NotificationChannel)
 	selfLink := "https://monitoring.googleapis.com/v3/" + data.Name
 

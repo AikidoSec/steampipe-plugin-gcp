@@ -115,7 +115,7 @@ func tableGcpSQLDatabase(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listSQLDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listSQLDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listSQLDatabases")
 
 	// Get the details of Cloud SQL instance
@@ -124,13 +124,13 @@ func listSQLDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	// ERROR: rpc error: code = Unknown desc = googleapi: Error 400: Invalid request: Invalid request since instance is not running., invalid
 	// Return nil, if the instance is not in Runnable state.
 	// ActivationPolicy specifies when the instance is activated.
-        // - SQL_ACTIVATION_POLICY_UNSPECIFIED  Unknown activation plan.
+	// - SQL_ACTIVATION_POLICY_UNSPECIFIED  Unknown activation plan.
 	// - ALWAYS	The instance is always up and running.
 	// - NEVER	The instance never starts.
 	// - ON_DEMAND  The instance starts upon receiving requests.(Deprecated)
 	// https://cloud.google.com/sql/docs/mysql/admin-api/rest/v1/instances#SqlActivationPolicy
-	
-	if instance.State != "RUNNABLE" || instance.Settings.ActivationPolicy !=  "ALWAYS" {
+
+	if instance.State != "RUNNABLE" || instance.Settings.ActivationPolicy != "ALWAYS" {
 		return nil, nil
 	}
 
@@ -163,7 +163,7 @@ func listSQLDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// HYDRATE FUNCTIONS
 
-func getSQLDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getSQLDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getSQLDatabase")
 
 	// Create service connection
@@ -205,13 +205,13 @@ func getSQLDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 //// TRANSFORM FUNCTIONS
 
-func sqlInstanceSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func sqlInstanceSelfLinkToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(sqlDatabaseInfo)
 	param := d.Param.(string)
 
 	project := strings.Split(data.Database.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://cloudsql.googleapis.com/projects/" + project + "/instances/" + data.Database.Instance + "/databases/" + data.Database.Name},
 	}

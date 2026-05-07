@@ -177,7 +177,7 @@ func tableGcpComputeFirewall(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeFirewalls(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeFirewalls(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeFirewalls")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -239,7 +239,7 @@ func listComputeFirewalls(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getComputeFirewall(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeFirewall(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -272,7 +272,7 @@ func getComputeFirewall(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeFirewallTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeFirewallTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	firewall := d.HydrateItem.(*compute.Firewall)
 	param := d.Param.(string)
 
@@ -286,7 +286,7 @@ func gcpComputeFirewallTurbotData(_ context.Context, d *transform.TransformData)
 
 	project := strings.Split(firewall.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Action":  action,
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/firewalls/" + firewall.Name},

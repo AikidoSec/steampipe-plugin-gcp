@@ -248,7 +248,7 @@ func tableGcpCloudRunWorkerPool(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCloudRunWorkerPools(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudRunWorkerPools(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	region := d.EqualsQualString("location")
 
 	var location string
@@ -318,7 +318,7 @@ func listCloudRunWorkerPools(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// HYDRATE FUNCTIONS
 
-func getCloudRunWorkerPool(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunWorkerPool(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudRunService(ctx, d)
 	if err != nil {
@@ -351,7 +351,7 @@ func getCloudRunWorkerPool(ctx context.Context, d *plugin.QueryData, h *plugin.H
 	return resp, err
 }
 
-func getCloudRunWorkerPoolIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunWorkerPoolIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*run.GoogleCloudRunV2WorkerPool)
 	workerPoolName := strings.Split(data.Name, "/")[5]
 	location := strings.Split(data.Name, "/")[3]
@@ -383,7 +383,7 @@ func getCloudRunWorkerPoolIamPolicy(ctx context.Context, d *plugin.QueryData, h 
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunWorkerPoolSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func cloudRunWorkerPoolSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*run.GoogleCloudRunV2WorkerPool)
 
 	var location string
@@ -402,7 +402,7 @@ func cloudRunWorkerPoolSelfLink(ctx context.Context, d *plugin.QueryData, h *plu
 	return selfLink, nil
 }
 
-func cloudRunWorkerPoolData(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func cloudRunWorkerPoolData(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := h.HydrateItem.(*run.GoogleCloudRunV2WorkerPool)
 	param := h.Param.(string)
 
@@ -412,7 +412,7 @@ func cloudRunWorkerPoolData(ctx context.Context, h *transform.TransformData) (in
 	location := parts[3]
 	name := parts[5]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectID,
 		"Title":    name,
 		"Location": location,

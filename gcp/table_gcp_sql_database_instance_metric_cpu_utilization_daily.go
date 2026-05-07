@@ -33,7 +33,7 @@ func tableGcpSQLDatabaseInstanceMetricCpuUtilizationDaily(_ context.Context) *pl
 
 //// LIST FUNCTION
 
-func listSQLDatabaseInstanceMetricCpuUtilizationDaily(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listSQLDatabaseInstanceMetricCpuUtilizationDaily(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	instanceInfo := h.Item.(*sqladmin.DatabaseInstance)
 
 	// Get project details

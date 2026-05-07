@@ -191,7 +191,7 @@ func tableGcpDataprocMetastoreService(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDataprocMetastoreServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDataprocMetastoreServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -269,7 +269,7 @@ func listDataprocMetastoreServices(ctx context.Context, d *plugin.QueryData, h *
 
 //// HYDRATE FUNCTIONS
 
-func getDataprocMetastoreService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDataprocMetastoreService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	name := d.EqualsQuals["name"].GetStringValue()
 
@@ -297,12 +297,12 @@ func getDataprocMetastoreService(ctx context.Context, d *plugin.QueryData, h *pl
 	return resp, nil
 }
 
-func gcpMetastoreServiceTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpMetastoreServiceTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	service := h.Item.(*metastore.Service)
 
 	splitName := strings.Split(service.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  splitName[1],
 		"Location": splitName[3],
 		"Akas":     []string{"gcp://metastore.googleapis.com/" + service.Name},
@@ -311,7 +311,7 @@ func gcpMetastoreServiceTurbotData(ctx context.Context, d *plugin.QueryData, h *
 	return turbotData, nil
 }
 
-func dataprocMetastoreServiceSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func dataprocMetastoreServiceSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	service := h.Item.(*metastore.Service)
 
 	selfLink := "https://metastore.googleapis.com/v1/" + service.Name

@@ -157,7 +157,7 @@ func tableGcpBigQueryDataset(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listBigQueryDatasets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listBigQueryDatasets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listBigQueryDatasets")
 
 	// Create Service Connection
@@ -209,7 +209,7 @@ func listBigQueryDatasets(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getBigQueryDataset(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBigQueryDataset(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := BigQueryService(ctx, d)
 	if err != nil {
@@ -247,7 +247,7 @@ func getBigQueryDataset(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// TRANSFORM FUNCTIONS
 
-func bigQueryDatasetAka(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func bigQueryDatasetAka(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := datasetID(h.HydrateItem)
 
 	projectID := strings.Split(data, ":")[0]
@@ -258,7 +258,7 @@ func bigQueryDatasetAka(ctx context.Context, h *transform.TransformData) (interf
 	return akas, nil
 }
 
-func bigQueryDatasetTitle(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func bigQueryDatasetTitle(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := datasetID(h.HydrateItem)
 	name := datasetName(h.HydrateItem)
 
@@ -268,7 +268,7 @@ func bigQueryDatasetTitle(ctx context.Context, h *transform.TransformData) (inte
 	return strings.Split(data, ":")[1], nil
 }
 
-func datasetID(item interface{}) string {
+func datasetID(item any) string {
 	switch item := item.(type) {
 	case *bigquery.DatasetListDatasets:
 		return item.Id
@@ -278,7 +278,7 @@ func datasetID(item interface{}) string {
 	return ""
 }
 
-func datasetName(item interface{}) string {
+func datasetName(item any) string {
 	switch item := item.(type) {
 	case *bigquery.DatasetListDatasets:
 		return item.FriendlyName
