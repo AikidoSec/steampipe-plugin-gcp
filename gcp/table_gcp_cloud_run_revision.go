@@ -182,7 +182,7 @@ func tableGcpCloudRunRevision(_ context.Context) *plugin.Table {
 			// JSON fields
 			{
 				Name:        "annotations",
-				Description: "Unstructured key value map that may be set by external tools to store and arbitrary metadata.",
+				Description: "Unstructured key value map that may be set by external tools to store arbitrary metadata.",
 				Type:        proto.ColumnType_JSON,
 			},
 			{
