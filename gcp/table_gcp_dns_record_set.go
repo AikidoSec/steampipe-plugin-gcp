@@ -115,7 +115,7 @@ func tableDnsRecordSet(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDnsRecordSets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDnsRecordSets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listDnsRecordSets")
 
 	// Get the details of Cloud DNS Managed Zone
@@ -162,7 +162,7 @@ func listDnsRecordSets(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 //// HYDRATE FUNCTIONS
 
-func getDnsRecordSet(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsRecordSet(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getDnsRecordSet")
 
 	// Create service connection
@@ -191,7 +191,7 @@ func getDnsRecordSet(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	return recordSetInfo{resp.Rrsets[0], managedZoneName}, nil
 }
 
-func getDnsRecordSetAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDnsRecordSetAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 
 	projectId, err := getProject(ctx, d, h)

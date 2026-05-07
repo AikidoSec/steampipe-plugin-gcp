@@ -165,7 +165,7 @@ func tableGcpComputeNodeTemplate(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeNodeTemplates(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeNodeTemplates(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeNodeTemplates")
 
 	// Create Service Connection
@@ -231,7 +231,7 @@ func listComputeNodeTemplates(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getComputeNodeTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeNodeTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -272,7 +272,7 @@ func getComputeNodeTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.
 	return &nodeTemplate, nil
 }
 
-func getComputeNodeTemplateIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeNodeTemplateIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -293,14 +293,14 @@ func getComputeNodeTemplateIamPolicy(ctx context.Context, d *plugin.QueryData, h
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeNodeTemplateTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeNodeTemplateTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	nodeTemplate := d.HydrateItem.(*compute.NodeTemplate)
 	param := d.Param.(string)
 
 	project := strings.Split(nodeTemplate.SelfLink, "/")[6]
 	region := getLastPathElement(types.SafeString(nodeTemplate.Region))
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/nodeTemplates/" + nodeTemplate.Name},
 	}

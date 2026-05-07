@@ -293,7 +293,7 @@ func tableGcpCloudfunctionFunction(ctx context.Context) *plugin.Table {
 
 //// HYDRATE FUNCTIONS
 
-func listCloudFunctions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudFunctions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	logger.Trace("listCloudFunctions")
 
@@ -349,7 +349,7 @@ func listCloudFunctions(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return nil, nil
 }
 
-func getCloudFunction(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudFunction(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	logger.Trace("GetCloudFunction")
 
@@ -379,7 +379,7 @@ func getCloudFunction(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	return cloudFunction, nil
 }
 
-func getGcpCloudFunctionIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpCloudFunctionIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	logger.Trace("getGcpCloudFunctionIamPolicy")
 
@@ -405,13 +405,13 @@ func getGcpCloudFunctionIamPolicy(ctx context.Context, d *plugin.QueryData, h *p
 
 //// TRANSFORM FUNCTIONS
 
-func gcpCloudFunctionTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpCloudFunctionTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	function := d.HydrateItem.(*cloudfunctions.Function)
 	param := d.Param.(string)
 
 	project := strings.Split(function.Name, "/")[1]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://cloudfunctions.googleapis.com/" + function.Name},
 	}
@@ -419,7 +419,7 @@ func gcpCloudFunctionTurbotData(_ context.Context, d *transform.TransformData) (
 	return turbotData[param], nil
 }
 
-func locationFromFunctionName(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func locationFromFunctionName(_ context.Context, d *transform.TransformData) (any, error) {
 	functionName := types.SafeString(d.Value)
 	parts := strings.Split(functionName, "/")
 	if len(parts) != 6 {
@@ -428,7 +428,7 @@ func locationFromFunctionName(_ context.Context, d *transform.TransformData) (in
 	return parts[3], nil
 }
 
-func cloudFunctionSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func cloudFunctionSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	cloudFunctionAttributeData := d.HydrateItem.(*cloudfunctions.Function)
 	var selfLink string
 	if cloudFunctionAttributeData.Environment == "GEN_1" {

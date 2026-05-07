@@ -186,7 +186,7 @@ func tableGcpComputeVpnTunnel(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeVpnTunnels(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeVpnTunnels(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeVpnTunnels")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -250,7 +250,7 @@ func listComputeVpnTunnels(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// HYDRATE FUNCTIONS
 
-func getComputeVpnTunnel(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeVpnTunnel(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -291,7 +291,7 @@ func getComputeVpnTunnel(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	return &vpnTunnel, nil
 }
 
-func getVpnTunnelAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getVpnTunnelAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	vpnTunnel := h.Item.(*compute.VpnTunnel)
 	region := getLastPathElement(types.SafeString(vpnTunnel.Region))
 

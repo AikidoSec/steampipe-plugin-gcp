@@ -20,7 +20,7 @@ func tableGcpComputeInstance(ctx context.Context) *plugin.Table {
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("name"),
 			Hydrate:    getComputeInstance,
-			Tags: map[string]string{"service": "compute", "action": "instances.get"},
+			Tags:       map[string]string{"service": "compute", "action": "instances.get"},
 		},
 		List: &plugin.ListConfig{
 			Hydrate: listComputeInstances,
@@ -43,7 +43,6 @@ func tableGcpComputeInstance(ctx context.Context) *plugin.Table {
 				Func: getComputeInstanceIamPolicy,
 				Tags: map[string]string{"service": "compute", "action": "instances.getIamPolicy"},
 			},
-			
 		},
 		Columns: []*plugin.Column{
 			// commonly used columns
@@ -292,7 +291,7 @@ func tableGcpComputeInstance(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeInstances")
 
 	// Create Service Connection
@@ -362,7 +361,7 @@ func listComputeInstances(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getComputeInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeInstance(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeInstance")
 
 	// Create Service Connection
@@ -405,7 +404,7 @@ func getComputeInstance(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return &instance, nil
 }
 
-func getComputeInstanceIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeInstanceIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	instance := h.Item.(*compute.Instance)
 
 	// Create Service Connection
@@ -426,14 +425,14 @@ func getComputeInstanceIamPolicy(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// TRANSFORM FUNCTION
 
-func gcpComputeInstanceTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeInstanceTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	instance := d.HydrateItem.(*compute.Instance)
 	param := d.Param.(string)
 
 	zone := getLastPathElement(types.SafeString(instance.Zone))
 	project := strings.Split(instance.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/zones/" + zone + "/instances/" + instance.Name},
 	}

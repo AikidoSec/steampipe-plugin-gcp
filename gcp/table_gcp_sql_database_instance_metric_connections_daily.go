@@ -33,7 +33,7 @@ func tableGcpSQLDatabaseInstanceMetricConnectionsDaily(_ context.Context) *plugi
 
 //// LIST FUNCTION
 
-func listSQLDatabaseInstanceMetricConnectionsDaily(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listSQLDatabaseInstanceMetricConnectionsDaily(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	instanceInfo := h.Item.(*sqladmin.DatabaseInstance)
 
 	// Get project details

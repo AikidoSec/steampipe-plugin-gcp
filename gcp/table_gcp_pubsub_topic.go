@@ -107,7 +107,7 @@ func tableGcpPubSubTopic(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listPubSubTopics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listPubSubTopics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := PubsubService(ctx, d)
 	if err != nil {
@@ -157,7 +157,7 @@ func listPubSubTopics(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// HYDRATE FUNCTIONS
 
-func getPubSubTopic(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getPubSubTopic(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getPubSubTopic")
 
 	// Create Service Connection
@@ -188,7 +188,7 @@ func getPubSubTopic(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	return req, nil
 }
 
-func getPubSubTopicIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getPubSubTopicIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getPubSubTopicIamPolicy")
 
 	// Create Service Connection
@@ -214,14 +214,14 @@ func getPubSubTopicIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func topicNameToTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func topicNameToTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	topic := d.HydrateItem.(*pubsub.Topic)
 	param := d.Param.(string)
 
 	// get the resource title
 	splittedTitle := strings.Split(topic.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": splittedTitle[1],
 		"Akas":    []string{"gcp://pubsub.googleapis.com/" + topic.Name},
 	}
@@ -229,7 +229,7 @@ func topicNameToTurbotData(_ context.Context, d *transform.TransformData) (inter
 	return turbotData[param], nil
 }
 
-func pubsubTopicSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func pubsubTopicSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*pubsub.Topic)
 	selfLink := "https://pubsub.googleapis.com/v1/" + data.Name
 

@@ -179,7 +179,7 @@ func tableGcpRedisCluster(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listGcpRedisClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpRedisClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	// Create Service Connection
@@ -245,7 +245,7 @@ func listGcpRedisClusters(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getGcpRedisCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpRedisCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	clusterName := d.EqualsQualString("name")
 
@@ -282,19 +282,19 @@ func getGcpRedisCluster(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 /// TRANSFORM FUNCTIONS
 
-func gcpRedisClusterTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpRedisClusterTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	cluster := d.HydrateItem.(*clusterpb.Cluster)
 	param := d.Param.(string)
 	akas := []string{"gcp://rediscluster.googleapis.com/" + cluster.Name}
 	location := strings.Split(cluster.Name, "/")[3]
-	data := make(map[string]interface{}, 0)
+	data := make(map[string]any, 0)
 	data["akas"] = akas
 	data["location"] = location
 
 	return data[param], nil
 }
 
-func gcpRedisClusterCreateTime(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpRedisClusterCreateTime(_ context.Context, d *transform.TransformData) (any, error) {
 	clusterCreateTime := d.HydrateItem.(*clusterpb.Cluster).CreateTime
 	if clusterCreateTime == nil {
 		return nil, nil

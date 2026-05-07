@@ -213,7 +213,7 @@ func tableGcpAlloyDBCluster(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listAlloydbClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listAlloydbClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -273,7 +273,7 @@ func listAlloydbClusters(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTION
 
-func getAlloydbCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getAlloydbCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -310,7 +310,7 @@ func getAlloydbCluster(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	return resp, nil
 }
 
-func alloyDBClusterSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func alloyDBClusterSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	cluster := h.Item.(*alloydb.Cluster)
 
 	selfLink := "https://alloydb.googleapis.com/v1/" + cluster.Name
@@ -318,7 +318,7 @@ func alloyDBClusterSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.
 	return selfLink, nil
 }
 
-func gcpAlloyDBClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpAlloyDBClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	cluster := h.Item.(*alloydb.Cluster)
 
 	var location string
@@ -329,7 +329,7 @@ func gcpAlloyDBClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *pl
 		location = matrixLocation
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  strings.Split(cluster.Name, "/")[1],
 		"Location": location,
 		"Akas":     []string{"gcp://alloydb.googleapis.com/" + cluster.Name},
@@ -340,7 +340,7 @@ func gcpAlloyDBClusterTurbotData(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// TRANSFORM FUNCTION
 
-func getAlloyDBClusterDisplayName(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func getAlloyDBClusterDisplayName(ctx context.Context, h *transform.TransformData) (any, error) {
 	displayName := ""
 	if h.HydrateItem != nil {
 		data := h.HydrateItem.(*alloydb.Cluster)

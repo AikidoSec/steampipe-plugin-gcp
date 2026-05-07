@@ -123,7 +123,7 @@ func tableGcpLoggingSink(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpLoggingSinks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpLoggingSinks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := LoggingService(ctx, d)
 	if err != nil {
@@ -176,7 +176,7 @@ func listGcpLoggingSinks(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTIONS
 
-func getGcpLoggingSink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpLoggingSink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpLoggingSink")
 
 	// Create Service Connection
@@ -209,7 +209,7 @@ func getGcpLoggingSink(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 	return op, nil
 }
 
-func sinkNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func sinkNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	sink := h.Item.(*logging.LogSink)
 
 	// Get project details
@@ -224,7 +224,7 @@ func sinkNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	return akas, nil
 }
 
-func getSinkSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getSinkSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	sink := h.Item.(*logging.LogSink)
 
 	// Get project details

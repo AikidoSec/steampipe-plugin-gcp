@@ -120,7 +120,7 @@ type roleInfo struct {
 
 //// FETCH FUNCTIONS
 
-func listIamRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listIamRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := IAMService(ctx, d)
 	if err != nil {
@@ -177,7 +177,7 @@ func listIamRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 		customRoles := service.Projects.Roles.List("projects/" + project).View(view).ShowDeleted(showDeleted).PageSize(*pageSize)
 		if err := customRoles.Pages(ctx, func(page *iam.ListRolesResponse) error {
 			// apply rate limiting
-		d.WaitForListRateLimit(ctx)
+			d.WaitForListRateLimit(ctx)
 
 			for _, role := range page.Roles {
 				d.StreamListItem(ctx, &roleInfo{role, false})
@@ -225,7 +225,7 @@ func listIamRoles(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 
 //// HYDRATE FUNCTIONS
 
-func getIamRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getIamRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getIamRole")
 
 	var name string
@@ -263,7 +263,7 @@ func getIamRole(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData)
 
 /// TRANSFORM FUNCTIONS
 
-func gcpIAMRoleTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpIAMRoleTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("googleIAMRoleTurbotData")
 	roleData := d.HydrateItem.(*roleInfo)
 	akas := []string{"gcp://iam.googleapis.com/" + roleData.Role.Name}

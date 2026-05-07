@@ -181,7 +181,7 @@ func tableGcpLoggingLogEntry(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpLoggingLogEntries(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpLoggingLogEntries(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := LoggingService(ctx, d)
 	if err != nil {
@@ -255,7 +255,7 @@ func listGcpLoggingLogEntries(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTION
 
-func getGcpLoggingLogEntry(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpLoggingLogEntry(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := LoggingService(ctx, d)
 	if err != nil {
@@ -375,12 +375,12 @@ func buildLoggingLogEntryFilterParam(equalQuals plugin.KeyColumnQualMap) string 
 
 //// TRANSFORM FUNCTION
 
-func covertLogEntryByteArrayToJsonObject(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func covertLogEntryByteArrayToJsonObject(ctx context.Context, d *transform.TransformData) (any, error) {
 	entry := d.HydrateItem.(*logging.LogEntry)
 	param := d.Param.(string)
 
-	var protoPlayload interface{}
-	var jsonPayload interface{}
+	var protoPlayload any
+	var jsonPayload any
 
 	a, err := entry.ProtoPayload.MarshalJSON()
 	if err != nil {
@@ -401,7 +401,7 @@ func covertLogEntryByteArrayToJsonObject(ctx context.Context, d *transform.Trans
 		plugin.Logger(ctx).Error("gcp_logging_log_entry.covertLogEntryByteArrayToJsonObject.jsonPayload", err)
 	}
 
-	payload := map[string]interface{}{
+	payload := map[string]any{
 		"JsonPayload":  jsonPayload,
 		"ProtoPayload": protoPlayload,
 	}

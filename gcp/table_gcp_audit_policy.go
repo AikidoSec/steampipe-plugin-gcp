@@ -61,7 +61,7 @@ func tableGcpAuditPolicy(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGcpAuditPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpAuditPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudResourceManagerService(ctx, d)
 	if err != nil {
@@ -90,7 +90,7 @@ func listGcpAuditPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return nil, nil
 }
 
-func serviceNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func serviceNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	auditConfig := h.Item.(*cloudresourcemanager.AuditConfig)
 
 	// Get project details

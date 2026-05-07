@@ -117,7 +117,7 @@ func tableGcpComputeProjectMetadata(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeProjectMetadata(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeProjectMetadata(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -144,7 +144,7 @@ func listComputeProjectMetadata(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// HYDRATE FUNCTIONS
 
-func getComputeProjectMetadataTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeProjectMetadataTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 
 	projectId, err := getProject(ctx, d, h)
@@ -157,7 +157,7 @@ func getComputeProjectMetadataTurbotData(ctx context.Context, d *plugin.QueryDat
 	akas := []string{"gcp://compute.googleapis.com/projects/" + project}
 
 	// Mapping all turbot defined properties
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Akas": akas,
 	}
 

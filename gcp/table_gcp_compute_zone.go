@@ -108,7 +108,7 @@ func tableGcpComputeZone(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeZones(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeZones(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeZones")
 
 	// Create Service Connection
@@ -174,14 +174,14 @@ func listComputeZones(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// TRANSFORM FUNCTION
 
-func gcpComputeZoneTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeZoneTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	zone := d.HydrateItem.(*compute.Zone)
 	param := d.Param.(string)
 
 	project := strings.Split(zone.SelfLink, "/")[6]
 	region := getLastPathElement(zone.Region)
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/zones/" + zone.Name},
 	}

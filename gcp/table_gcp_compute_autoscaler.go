@@ -147,7 +147,7 @@ func tableGcpComputeAutoscaler(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listComputeAutoscaler(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeAutoscaler(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Max limit is set as per documentation
 	pageSize := types.Int64(500)
@@ -201,7 +201,7 @@ func listComputeAutoscaler(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// HYDRATE FUNCTIONS
 
-func getComputeAutoscaler(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeAutoscaler(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Get project details
 
@@ -248,7 +248,7 @@ func getComputeAutoscaler(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTIONS
 
-func autoscalerAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func autoscalerAka(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.Autoscaler)
 
 	zoneName := getLastPathElement(types.SafeString(i.Zone))
@@ -266,7 +266,7 @@ func autoscalerAka(_ context.Context, d *transform.TransformData) (interface{}, 
 	return akas, nil
 }
 
-func autoscalerLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func autoscalerLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.Autoscaler)
 	param := d.Param.(string)
 

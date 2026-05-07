@@ -131,7 +131,7 @@ func tableGcpComputeNetwork(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeNetworks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeNetworks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeNetworks")
 
 	// Create Service Connection
@@ -193,7 +193,7 @@ func listComputeNetworks(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTIONS
 
-func getComputeNetwork(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeNetwork(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeNetwork")
 
 	// Create Service Connection
@@ -222,13 +222,13 @@ func getComputeNetwork(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeNetworkTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeNetworkTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	network := d.HydrateItem.(*compute.Network)
 	param := d.Param.(string)
 
 	project := strings.Split(network.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/networks/" + network.Name},
 	}
@@ -236,7 +236,7 @@ func gcpComputeNetworkTurbotData(_ context.Context, d *transform.TransformData) 
 	return turbotData[param], nil
 }
 
-func networkMtu(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func networkMtu(_ context.Context, d *transform.TransformData) (any, error) {
 	network := d.HydrateItem.(*compute.Network)
 
 	if network.Mtu == 0 {

@@ -155,7 +155,7 @@ func tableGcpComputeInstanceGroup(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listComputeInstanceGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeInstanceGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Max limit is set as per documentation
 	pageSize := types.Int64(500)
 	limit := d.QueryContext.Limit
@@ -207,7 +207,7 @@ func listComputeInstanceGroup(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getComputeInstanceGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeInstanceGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeInstanceGroup")
 
 	// Get project details
@@ -249,7 +249,7 @@ func getComputeInstanceGroup(ctx context.Context, d *plugin.QueryData, h *plugin
 	return &group, nil
 }
 
-func getComputeInstanceGroupInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeInstanceGroupInstances(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	instanceGroup := h.Item.(*compute.InstanceGroup)
 
 	// Get project details
@@ -288,7 +288,7 @@ func getComputeInstanceGroupInstances(ctx context.Context, d *plugin.QueryData, 
 
 //// TRANSFORM FUNCTIONS
 
-func instanceGroupAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func instanceGroupAka(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.InstanceGroup)
 
 	zoneName := getLastPathElement(types.SafeString(i.Zone))
@@ -306,7 +306,7 @@ func instanceGroupAka(_ context.Context, d *transform.TransformData) (interface{
 	return akas, nil
 }
 
-func instanceGroupLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func instanceGroupLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	i := d.HydrateItem.(*compute.InstanceGroup)
 	param := d.Param.(string)
 

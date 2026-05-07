@@ -181,7 +181,7 @@ func tableGcpLoggingMetric(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpLoggingMetrics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpLoggingMetrics(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := LoggingService(ctx, d)
 	if err != nil {
@@ -234,7 +234,7 @@ func listGcpLoggingMetrics(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// HYDRATE FUNCTIONS
 
-func getGcpLoggingMetric(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpLoggingMetric(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpLoggingMetric")
 
 	// Create Service Connection
@@ -266,7 +266,7 @@ func getGcpLoggingMetric(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	return op, nil
 }
 
-func metricNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func metricNameToAkas(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	metric := h.Item.(*logging.LogMetric)
 
 	// Get project details

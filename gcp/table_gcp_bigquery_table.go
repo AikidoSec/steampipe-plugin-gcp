@@ -246,7 +246,7 @@ func tableGcpBigqueryTable(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listBigqueryTables(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listBigqueryTables(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("ListBigqueryTables")
 
 	// Get a details of Cloud Dataset
@@ -300,7 +300,7 @@ func listBigqueryTables(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getBigqueryTable(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBigqueryTable(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getBigqueryTable")
 
 	// Create Service Connection
@@ -341,7 +341,7 @@ func getBigqueryTable(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// TRANSFORM FUNCTIONS
 
-func bigqueryTableAkas(_ context.Context, h *transform.TransformData) (interface{}, error) {
+func bigqueryTableAkas(_ context.Context, h *transform.TransformData) (any, error) {
 	data := tableID(h.HydrateItem)
 
 	projectID := strings.Split(data, ":")[0]
@@ -353,7 +353,7 @@ func bigqueryTableAkas(_ context.Context, h *transform.TransformData) (interface
 	return akas, nil
 }
 
-func bigQueryTableTitle(_ context.Context, h *transform.TransformData) (interface{}, error) {
+func bigQueryTableTitle(_ context.Context, h *transform.TransformData) (any, error) {
 	data := tableID(h.HydrateItem)
 	name := tableName(h.HydrateItem)
 
@@ -363,7 +363,7 @@ func bigQueryTableTitle(_ context.Context, h *transform.TransformData) (interfac
 	return strings.Split(strings.Split(data, ":")[1], ".")[1], nil
 }
 
-func tableID(item interface{}) string {
+func tableID(item any) string {
 	switch item := item.(type) {
 	case *bigquery.TableListTables:
 		return item.Id
@@ -373,7 +373,7 @@ func tableID(item interface{}) string {
 	return ""
 }
 
-func tableName(item interface{}) string {
+func tableName(item any) string {
 	switch item := item.(type) {
 	case *bigquery.TableListTables:
 		return item.FriendlyName

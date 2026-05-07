@@ -108,7 +108,7 @@ func tableGcpComputeRegion(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeRegions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeRegions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeRegions")
 
 	// Create Service Connection
@@ -174,7 +174,7 @@ func listComputeRegions(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// TRANSFORM FUNCTION
 
-func regionZoneNames(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func regionZoneNames(_ context.Context, d *transform.TransformData) (any, error) {
 	region := d.HydrateItem.(*compute.Region)
 
 	zoneNames := []string{}
@@ -185,12 +185,12 @@ func regionZoneNames(_ context.Context, d *transform.TransformData) (interface{}
 	return zoneNames, nil
 }
 
-func gcpComputeRegionTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeRegionTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	region := d.HydrateItem.(*compute.Region)
 	param := d.Param.(string)
 	project := strings.Split(region.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region.Name},
 	}

@@ -64,7 +64,7 @@ func tableGcpTagBinding(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGcpTagBindings(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
+func listGcpTagBindings(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (any, error) {
 	parent := d.EqualsQuals["parent"].GetStringValue()
 
 	if parent == "" {

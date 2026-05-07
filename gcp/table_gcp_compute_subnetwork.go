@@ -223,7 +223,7 @@ func tableGcpComputeSubnetwork(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeSubnetworks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeSubnetworks(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeSubnetworks")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -290,7 +290,7 @@ func listComputeSubnetworks(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTIONS
 
-func getComputeSubnetwork(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeSubnetwork(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	logger.Trace("getComputeSubnetwork")
 
@@ -332,7 +332,7 @@ func getComputeSubnetwork(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return &subnetwork, nil
 }
 
-func getComputeSubnetworkIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeSubnetworkIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	subnetwork := h.Item.(*compute.Subnetwork)
 
 	// Create Service Connection
@@ -354,14 +354,14 @@ func getComputeSubnetworkIamPolicy(ctx context.Context, d *plugin.QueryData, h *
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeSubnetworkTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeSubnetworkTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	subnetwork := d.HydrateItem.(*compute.Subnetwork)
 	param := d.Param.(string)
 
 	region := getLastPathElement(types.SafeString(subnetwork.Region))
 	project := strings.Split(subnetwork.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/subnetworks/" + subnetwork.Name},
 	}

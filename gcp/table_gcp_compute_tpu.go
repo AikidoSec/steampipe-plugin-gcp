@@ -178,7 +178,7 @@ func tableGcpComputeTpu(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeTpus(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeTpus(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	err := errors.New("The gcp_compute_tpu table has been deprecated and removed, please use gcp_tpu_vm table instead.")
 	return nil, err
 }

@@ -111,7 +111,7 @@ func tableGcpApiKeysKey(_ context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	// Get project details
 	projectId, err := getProject(ctx, d, h)
@@ -168,7 +168,7 @@ func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 //// HYDRATE FUNCTIONS
 
-func getApiKeysKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getApiKeysKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	// Get project details
@@ -204,7 +204,7 @@ func getApiKeysKey(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 
 // /// TRANSFORM FUNCTIONS
 
-func gcpApiKeyTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpApiKeyTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	keyData := d.HydrateItem.(*apikeys.V2Key)
 	akas := []string{"gcp://iam.googleapis.com/" + keyData.Name}
 	return akas, nil

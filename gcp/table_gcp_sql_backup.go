@@ -139,7 +139,7 @@ func tableGcpSQLBackup(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listSQLBackups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listSQLBackups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listSQLBackups")
 
 	// Get the details of Cloud SQL instance
@@ -194,7 +194,7 @@ func listSQLBackups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 //// HYDRATE FUNCTIONS
 
-func getSQLBackup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getSQLBackup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getSQLBackup")
 
 	// Create service connection
@@ -222,7 +222,7 @@ func getSQLBackup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	return resp, nil
 }
 
-func getSQLBackupAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getSQLBackupAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	backup := h.Item.(*sqladmin.BackupRun)
 
 	// Get project details

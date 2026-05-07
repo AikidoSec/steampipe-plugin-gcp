@@ -144,7 +144,7 @@ func tableGcpComputeHaVpnGateway(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeHaVpnGateways(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeHaVpnGateways(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	pageSize := types.Int64(500)
 	limit := d.QueryContext.Limit
 	if d.QueryContext.Limit != nil {
@@ -196,7 +196,7 @@ func listComputeHaVpnGateways(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// HYDRATE FUNCTIONS
 
-func getComputeHaVpnGateway(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeHaVpnGateway(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	// Get project details
 
@@ -244,7 +244,7 @@ func getComputeHaVpnGateway(ctx context.Context, d *plugin.QueryData, h *plugin.
 	return &vpnGateway, nil
 }
 
-func getComputeHaVpnGatewayVpnConnections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeHaVpnGatewayVpnConnections(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	vpnGateway := h.Item.(*compute.VpnGateway)
 	region := getLastPathElement(types.SafeString(vpnGateway.Region))
 
@@ -271,7 +271,7 @@ func getComputeHaVpnGatewayVpnConnections(ctx context.Context, d *plugin.QueryDa
 	return resp.Result.VpnConnections, nil
 }
 
-func getVpnGatewayAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getVpnGatewayAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	vpnGateway := h.Item.(*compute.VpnGateway)
 	region := getLastPathElement(types.SafeString(vpnGateway.Region))
 

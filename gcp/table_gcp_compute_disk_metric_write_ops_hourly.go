@@ -35,7 +35,7 @@ func tableGcpComputeDiskMetricWriteOpsHourly(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeDiskMetricWriteOpsHourly(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeDiskMetricWriteOpsHourly(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	diskInfo := h.Item.(*compute.Disk)
 
 	// Get location

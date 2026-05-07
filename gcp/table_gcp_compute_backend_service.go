@@ -240,7 +240,7 @@ func tableGcpComputeBackendService(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeBackendServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeBackendServices(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeBackendServices")
 
 	// Create Service Connection
@@ -307,7 +307,7 @@ func listComputeBackendServices(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// HYDRATE FUNCTIONS
 
-func getComputeBackendService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeBackendService(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -350,7 +350,7 @@ func getComputeBackendService(ctx context.Context, d *plugin.QueryData, h *plugi
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeBackendServiceAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeBackendServiceAka(_ context.Context, d *transform.TransformData) (any, error) {
 	backendService := d.HydrateItem.(*compute.BackendService)
 	region := getLastPathElement(types.SafeString(backendService.Region))
 	project := strings.Split(backendService.SelfLink, "/")[6]
@@ -364,7 +364,7 @@ func gcpComputeBackendServiceAka(_ context.Context, d *transform.TransformData) 
 	return akas, nil
 }
 
-func gcpComputeBackendServiceLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeBackendServiceLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	backendService := d.HydrateItem.(*compute.BackendService)
 	param := d.Param.(string)
 	regionName := getLastPathElement(types.SafeString(backendService.Region))

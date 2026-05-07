@@ -121,7 +121,7 @@ func tableGcpVPCAccessConnector(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listVPCAccessConnectors(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listVPCAccessConnectors(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
@@ -179,7 +179,7 @@ func listVPCAccessConnectors(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// HYDRATE FUNCTIONS
 
-func getVPCAccessConnector(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getVPCAccessConnector(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 
 	name := d.EqualsQualString("name")
@@ -210,13 +210,13 @@ func getVPCAccessConnector(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// TRANSFORM FUNCTIONS
 
-func vpcAccessConnectorTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func vpcAccessConnectorTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*vpcaccess.Connector)
 	param := d.Param.(string)
 
 	splitName := strings.Split(data.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  splitName[1],
 		"Location": splitName[3],
 		"SelfLink": "https://vpcaccess.googleapis.com/v1/" + data.Name,

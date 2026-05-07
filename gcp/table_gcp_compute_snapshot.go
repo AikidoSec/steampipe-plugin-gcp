@@ -187,7 +187,7 @@ func tableGcpComputeSnapshot(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeSnapshots(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeSnapshots(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeSnapshots")
 
 	// Create Service Connection
@@ -251,7 +251,7 @@ func listComputeSnapshots(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// HYDRATE FUNCTIONS
 
-func getComputeSnapshot(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeSnapshot(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 	logger.Trace("getComputeSnapshot")
 
@@ -287,13 +287,13 @@ func getComputeSnapshot(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeSnapshotTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeSnapshotTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	snapshot := d.HydrateItem.(*compute.Snapshot)
 	param := d.Param.(string)
 
 	project := strings.Split(snapshot.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/snapshots/" + snapshot.Name},
 	}

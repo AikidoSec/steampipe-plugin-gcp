@@ -353,7 +353,7 @@ func tableGcpKubernetesCluster(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listKubernetesClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listKubernetesClusters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listKubernetesClusters")
 
 	// Create Service Connection
@@ -385,7 +385,7 @@ func listKubernetesClusters(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 /// HYDRATE FUNCTIONS
 
-func getKubernetesCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKubernetesCluster(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKubernetesCluster")
 
 	// Create Service Connection
@@ -420,14 +420,14 @@ func getKubernetesCluster(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTIONS
 
-func gcpKubernetesClusterTurbotData(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpKubernetesClusterTurbotData(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("gcpKubernetesClusterTurbotData")
 	cluster := d.HydrateItem.(*container.Cluster)
 
 	splitName := strings.Split(cluster.SelfLink, "/")
 	akas := []string{strings.Replace(cluster.SelfLink, "https://", "gcp://", 1)}
 
-	result := map[string]interface{}{
+	result := map[string]any{
 		"ClusterName": splitName[9],
 		"Location":    splitName[7],
 		"Project":     splitName[5],
@@ -436,37 +436,37 @@ func gcpKubernetesClusterTurbotData(ctx context.Context, d *transform.TransformD
 	return result[d.Param.(string)], nil
 }
 
-func gcpKubernetesClusterAddonConfig(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpKubernetesClusterAddonConfig(ctx context.Context, d *transform.TransformData) (any, error) {
 	cluster := d.HydrateItem.(*container.Cluster)
 
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	extractNonNilFields(reflect.ValueOf(cluster.AddonsConfig), result)
 	jsonResult, _ := json.MarshalIndent(result, "", "    ")
 
 	return string(jsonResult), nil
 }
 
-func gcpKubernetesClusterNetworkConfig(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpKubernetesClusterNetworkConfig(ctx context.Context, d *transform.TransformData) (any, error) {
 	cluster := d.HydrateItem.(*container.Cluster)
 
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	extractNonNilFields(reflect.ValueOf(cluster.NetworkConfig), result)
 	jsonResult, _ := json.MarshalIndent(result, "", "    ")
 
 	return string(jsonResult), nil
 }
 
-func gcpKubernetesClusterNodeConfig(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpKubernetesClusterNodeConfig(ctx context.Context, d *transform.TransformData) (any, error) {
 	cluster := d.HydrateItem.(*container.Cluster)
 
-	result := make(map[string]interface{})
+	result := make(map[string]any)
 	extractNonNilFields(reflect.ValueOf(cluster.NodeConfig), result)
 	jsonResult, _ := json.MarshalIndent(result, "", "    ")
 
 	return string(jsonResult), nil
 }
 
-func gcpKubernetesClusterLocationType(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpKubernetesClusterLocationType(ctx context.Context, d *transform.TransformData) (any, error) {
 	plugin.Logger(ctx).Trace("gcpKubernetesClusterLocationType")
 	cluster := d.HydrateItem.(*container.Cluster)
 
@@ -480,7 +480,7 @@ func gcpKubernetesClusterLocationType(ctx context.Context, d *transform.Transfor
 
 //// UTILITY FUNCTION
 
-func extractNonNilFields(val reflect.Value, result map[string]interface{}) {
+func extractNonNilFields(val reflect.Value, result map[string]any) {
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
 	}
@@ -498,13 +498,13 @@ func extractNonNilFields(val reflect.Value, result map[string]interface{}) {
 		if field.Kind() == reflect.Ptr {
 			if !field.IsNil() {
 				// Create a nested map for each non-nil struct
-				nestedMap := make(map[string]interface{})
+				nestedMap := make(map[string]any)
 				result[fieldName] = nestedMap
 				extractNonNilFields(field, nestedMap)
 			} else {
 				if fieldName != "NullFields" && fieldName != "ForceSendFields" {
 					// If the pointer is nil, create an empty map
-					result[fieldName] = make(map[string]interface{})
+					result[fieldName] = make(map[string]any)
 				}
 			}
 		} else {

@@ -18,11 +18,11 @@ func tableGcpSecretManagerSecret(_ context.Context) *plugin.Table {
 		Get: &plugin.GetConfig{
 			KeyColumns: plugin.SingleColumn("name"),
 			Hydrate:    getGcpSecretManagerSecret,
-			Tags: map[string]string{"service": "secretmanager", "action": "secrets.get"},
+			Tags:       map[string]string{"service": "secretmanager", "action": "secrets.get"},
 		},
 		List: &plugin.ListConfig{
 			Hydrate: listGcpSecretManagerSecrets,
-			Tags: map[string]string{"service": "secretmanager", "action": "secrets.list"},
+			Tags:    map[string]string{"service": "secretmanager", "action": "secrets.list"},
 		},
 		Columns: []*plugin.Column{
 			{
@@ -107,7 +107,7 @@ func tableGcpSecretManagerSecret(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGcpSecretManagerSecrets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpSecretManagerSecrets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := SecretManagerService(ctx, d)
 	if err != nil {
@@ -155,7 +155,7 @@ func listGcpSecretManagerSecrets(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// HYDRATE FUNCTIONS
 
-func getGcpSecretManagerSecret(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpSecretManagerSecret(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := SecretManagerService(ctx, d)
 	if err != nil {
@@ -189,7 +189,7 @@ func getGcpSecretManagerSecret(ctx context.Context, d *plugin.QueryData, h *plug
 
 //// TRANSFORM FUNCTIONS
 
-func secretManagerSecretNameToAkas(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func secretManagerSecretNameToAkas(ctx context.Context, d *transform.TransformData) (any, error) {
 	secret := d.HydrateItem.(*secretmanager.Secret)
 
 	// Get data for turbot defined properties

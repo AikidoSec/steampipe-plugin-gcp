@@ -152,7 +152,7 @@ func tableGcpVertexAINotebookRuntimeTemplate(ctx context.Context) *plugin.Table 
 	}
 }
 
-func listAIPlatformNotebookRuntimeTemplates(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listAIPlatformNotebookRuntimeTemplates(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	region := d.EqualsQualString("location")
@@ -226,7 +226,7 @@ func listAIPlatformNotebookRuntimeTemplates(ctx context.Context, d *plugin.Query
 
 //// HYDRATE FUNCTIONS
 
-func getAIPlatformNotebookRuntimeTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getAIPlatformNotebookRuntimeTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	logger := plugin.Logger(ctx)
 
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
@@ -269,19 +269,19 @@ func getAIPlatformNotebookRuntimeTemplate(ctx context.Context, d *plugin.QueryDa
 
 /// TRANSFORM FUNCTIONS
 
-func gcpNotebookRuntimeTemplate(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpNotebookRuntimeTemplate(ctx context.Context, d *transform.TransformData) (any, error) {
 	param := d.Param.(string)
 	AIData := d.HydrateItem.(*aiplatformpb.NotebookRuntimeTemplate)
 	akas := []string{"gcp://aiplatform.googleapis.com/" + AIData.Name}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Location": strings.Split(AIData.Name, "/")[3],
 		"Akas":     akas,
 	}
 	return turbotData[param], nil
 }
 
-func getNotebookRuntimeTemplateType(ctx context.Context, d *transform.TransformData) (interface{}, error) {
+func getNotebookRuntimeTemplateType(ctx context.Context, d *transform.TransformData) (any, error) {
 	AIData := d.HydrateItem.(*aiplatformpb.NotebookRuntimeTemplate)
 
 	return aiplatformpb.NotebookRuntimeType_name[int32(AIData.NotebookRuntimeType)], nil

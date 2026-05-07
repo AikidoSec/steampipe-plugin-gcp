@@ -110,7 +110,7 @@ func tableGcpOrganizationProject(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGCPOrganizationProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGCPOrganizationProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudResourceManagerService(ctx, d)
 	if err != nil {

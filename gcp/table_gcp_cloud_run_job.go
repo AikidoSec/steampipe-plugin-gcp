@@ -227,7 +227,7 @@ func tableGcpCloudRunJob(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCloudRunJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudRunJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	region := d.EqualsQualString("location")
 
 	var location string
@@ -291,7 +291,7 @@ func listCloudRunJobs(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// HYDRATE FUNCTIONS
 
-func getCloudRunJob(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunJob(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudRunService(ctx, d)
 	if err != nil {
@@ -325,7 +325,7 @@ func getCloudRunJob(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 	return resp, err
 }
 
-func getCloudRunJobIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunJobIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 
 	data := h.Item.(*run.GoogleCloudRunV2Job)
 	jobName := strings.Split(data.Name, "/")[5]
@@ -359,7 +359,7 @@ func getCloudRunJobIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunJobSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func cloudRunJobSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*run.GoogleCloudRunV2Job)
 
 	var location string
@@ -379,7 +379,7 @@ func cloudRunJobSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunJobData(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func cloudRunJobData(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := h.HydrateItem.(*run.GoogleCloudRunV2Job)
 	param := h.Param.(string)
 
@@ -387,7 +387,7 @@ func cloudRunJobData(ctx context.Context, h *transform.TransformData) (interface
 	name := strings.Split(data.Name, "/")[5]
 	location := strings.Split(data.Name, "/")[3]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectID,
 		"Title":    name,
 		"Location": location,

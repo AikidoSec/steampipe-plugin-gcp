@@ -15,13 +15,13 @@ import (
 
 // BuildregionList :: return a list of matrix items, one per region specified
 // https://cloud.google.com/dataproc/docs/concepts/regional-endpoints
-func BuildComputeLocationList(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
+func BuildComputeLocationList(ctx context.Context, d *plugin.QueryData) []map[string]any {
 
 	// have we already created and cached the locations?
 	locationCacheKey := "Compute"
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
-		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
-		return cachedData.([]map[string]interface{})
+		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]any))
+		return cachedData.([]map[string]any)
 	}
 
 	var ignoredLocations []string
@@ -53,25 +53,25 @@ func BuildComputeLocationList(ctx context.Context, d *plugin.QueryData) []map[st
 	}
 
 	// validate location list
-	matrix := make([]map[string]interface{}, 0, len(resp.Items))
+	matrix := make([]map[string]any, 0, len(resp.Items))
 	for _, location := range resp.Items {
 		if slices.Contains(ignoredLocations, location.Name) {
 			continue
 		}
 
-		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.Name})
+		matrix = append(matrix, map[string]any{matrixKeyLocation: location.Name})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix
 }
 
 // BuildComputeLocationListWithGlobal :: return a list of matrix items including global and all regions
-func BuildComputeLocationListWithGlobal(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
+func BuildComputeLocationListWithGlobal(ctx context.Context, d *plugin.QueryData) []map[string]any {
 	// have we already created and cached the locations?
 	locationCacheKey := "ComputeWithGlobal"
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
-		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
-		return cachedData.([]map[string]interface{})
+		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]any))
+		return cachedData.([]map[string]any)
 	}
 
 	var ignoredLocations []string
@@ -103,16 +103,16 @@ func BuildComputeLocationListWithGlobal(ctx context.Context, d *plugin.QueryData
 	}
 
 	// Add global and all regions to the matrix
-	matrix := make([]map[string]interface{}, 0, len(resp.Items)+1)
+	matrix := make([]map[string]any, 0, len(resp.Items)+1)
 	// Add global first
-	matrix = append(matrix, map[string]interface{}{matrixKeyLocation: "global"})
+	matrix = append(matrix, map[string]any{matrixKeyLocation: "global"})
 	// Then add all regions
 	for _, location := range resp.Items {
 		if slices.Contains(ignoredLocations, location.Name) {
 			continue
 		}
 
-		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.Name})
+		matrix = append(matrix, map[string]any{matrixKeyLocation: location.Name})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix

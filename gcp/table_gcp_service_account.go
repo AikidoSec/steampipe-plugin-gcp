@@ -111,7 +111,7 @@ func tableGcpServiceAccount(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGcpServiceAccounts(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpServiceAccounts(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := IAMService(ctx, d)
 	if err != nil {
@@ -164,7 +164,7 @@ func listGcpServiceAccounts(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTIONS
 
-func getGcpServiceAccount(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpServiceAccount(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpServiceAccount")
 	// Create Service Connection
 	service, err := IAMService(ctx, d)
@@ -197,7 +197,7 @@ func getGcpServiceAccount(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 	return op, nil
 }
 
-func getServiceAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getServiceAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	account := h.Item.(*iam.ServiceAccount)
 	plugin.Logger(ctx).Trace("getServiceAccountIamPolicy")
 
@@ -233,7 +233,7 @@ func getServiceAccountIamPolicy(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// TRANSFORM FUNCTIONS
 
-func serviceAccountNameToAkas(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func serviceAccountNameToAkas(_ context.Context, d *transform.TransformData) (any, error) {
 	serviceAccount := d.HydrateItem.(*iam.ServiceAccount)
 
 	// Get data for turbot defined properties

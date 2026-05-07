@@ -136,7 +136,7 @@ func tableGcpComputeRouter(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeRouters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeRouters(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeRouters")
 
 	// Create Service Connection
@@ -190,7 +190,7 @@ func listComputeRouters(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getComputeRouter(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeRouter(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -234,14 +234,14 @@ func getComputeRouter(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeRouterTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeRouterTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	router := d.HydrateItem.(*compute.Router)
 	param := d.Param.(string)
 
 	region := getLastPathElement(types.SafeString(router.Region))
 	project := strings.Split(router.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/regions/" + region + "/routers/" + router.Name},
 	}

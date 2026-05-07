@@ -248,7 +248,7 @@ func tableGcpStorageObject(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listStorageObjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listStorageObjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	bucket := d.EqualsQualString("bucket")
 	prefix := d.EqualsQualString("prefix")
 
@@ -299,7 +299,7 @@ func listStorageObjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getStorageObject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getStorageObject(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	bucket := d.EqualsQuals["bucket"].GetStringValue()
 	name := d.EqualsQuals["name"].GetStringValue()
 
@@ -323,7 +323,7 @@ func getStorageObject(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	return req, nil
 }
 
-func getStorageObjectIAMPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getStorageObjectIAMPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	object := h.Item.(*storage.Object)
 
 	// Create Session
@@ -347,7 +347,7 @@ func getStorageObjectIAMPolicy(ctx context.Context, d *plugin.QueryData, h *plug
 	return resp, nil
 }
 
-func getObjectAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getObjectAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	object := h.Item.(*storage.Object)
 
 	// Get project details

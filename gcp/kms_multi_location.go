@@ -18,13 +18,13 @@ import (
 const matrixKeyLocation = "location"
 
 // BuildregionList :: return a list of matrix items, one per region specified
-func BuildLocationList(ctx context.Context, d *plugin.QueryData) []map[string]interface{} {
+func BuildLocationList(ctx context.Context, d *plugin.QueryData) []map[string]any {
 
 	// have we already created and cached the locations?
 	locationCacheKey := "KMSLocation"
 	if cachedData, ok := d.ConnectionManager.Cache.Get(locationCacheKey); ok {
-		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]interface{}))
-		return cachedData.([]map[string]interface{})
+		plugin.Logger(ctx).Trace("listlocationDetails:", cachedData.([]map[string]any))
+		return cachedData.([]map[string]any)
 	}
 
 	var ignoredLocations []string
@@ -56,13 +56,13 @@ func BuildLocationList(ctx context.Context, d *plugin.QueryData) []map[string]in
 	}
 
 	// validate location list
-	matrix := make([]map[string]interface{}, 0, len(resp.Locations))
+	matrix := make([]map[string]any, 0, len(resp.Locations))
 	for _, location := range resp.Locations {
 		if slices.Contains(ignoredLocations, location.LocationId) {
 			continue
 		}
 
-		matrix = append(matrix, map[string]interface{}{matrixKeyLocation: location.LocationId})
+		matrix = append(matrix, map[string]any{matrixKeyLocation: location.LocationId})
 	}
 	d.ConnectionManager.Cache.Set(locationCacheKey, matrix)
 	return matrix

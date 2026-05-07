@@ -162,7 +162,7 @@ func tableGcpFirestoreDatabase(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listFirestoreDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listFirestoreDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := FirestoreDatabaseService(ctx, d)
 	if err != nil {
@@ -203,7 +203,7 @@ func listFirestoreDatabases(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTIONS
 
-func getFirestoreDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getFirestoreDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := FirestoreDatabaseService(ctx, d)
 	if err != nil {
@@ -240,7 +240,7 @@ func getFirestoreDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTIONS
 
-func firestoreDatabaseTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func firestoreDatabaseTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*firestore.GoogleFirestoreAdminV1Database)
 	param := d.Param.(string)
 
@@ -248,7 +248,7 @@ func firestoreDatabaseTurbotData(_ context.Context, d *transform.TransformData) 
 	project := split[1]
 	title := split[3]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Akas":    []string{"gcp://firestore.googleapis.com/" + data.Name},
 		"Project": project,
 		"Title":   title,
@@ -257,7 +257,7 @@ func firestoreDatabaseTurbotData(_ context.Context, d *transform.TransformData) 
 	return turbotData[param], nil
 }
 
-func firestoreDatabaseSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func firestoreDatabaseSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*firestore.GoogleFirestoreAdminV1Database)
 
 	selfLink := "https://firestore.googleapis.com/v1/" + data.Name

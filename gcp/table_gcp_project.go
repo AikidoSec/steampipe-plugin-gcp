@@ -110,7 +110,7 @@ func tableGcpProject(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGCPProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGCPProjects(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudResourceManagerService(ctx, d)
 	if err != nil {
@@ -144,7 +144,7 @@ func listGCPProjects(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 //// HYDRATE FUNCTIONS
 
-func getProjectAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 	project := h.Item.(*cloudresourcemanager.Project)
 
@@ -154,7 +154,7 @@ func getProjectAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDa
 	return akas, nil
 }
 
-func getProjectAccessApprovalSettings(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectAccessApprovalSettings(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := AccessApprovalService(ctx, d)
 	if err != nil {
@@ -176,7 +176,7 @@ func getProjectAccessApprovalSettings(ctx context.Context, d *plugin.QueryData, 
 	return resp, nil
 }
 
-func getProjectAncestors(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectAncestors(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudResourceManagerService(ctx, d)
 	if err != nil {
@@ -198,7 +198,7 @@ func getProjectAncestors(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	return resp.Ancestor, nil
 }
 
-func getProjectBillingInfo(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getProjectBillingInfo(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := BillingService(ctx, d)
 	if err != nil {
@@ -220,7 +220,7 @@ func getProjectBillingInfo(ctx context.Context, d *plugin.QueryData, h *plugin.H
 	return resp, nil
 }
 
-func projectSelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func projectSelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*cloudresourcemanager.Project)
 	selfLink := "https://cloudresourcemanager.googleapis.com/v1/projects/" + data.Name
 

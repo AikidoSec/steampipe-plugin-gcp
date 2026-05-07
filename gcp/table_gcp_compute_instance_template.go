@@ -204,7 +204,7 @@ func tableGcpComputeInstanceTemplate(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeInstanceTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeInstanceTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -254,7 +254,7 @@ func listComputeInstanceTemplate(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// HYDRATE FUNCTION
 
-func getComputeInstanceTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeInstanceTemplate(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -287,13 +287,13 @@ func getComputeInstanceTemplate(ctx context.Context, d *plugin.QueryData, h *plu
 
 //// TRANSFORM FUNCTION
 
-func gcpComputeInstanceTemplateTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeInstanceTemplateTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	instanceTemplate := d.HydrateItem.(*compute.InstanceTemplate)
 	param := d.Param.(string)
 
 	project := strings.Split(instanceTemplate.SelfLink, "/")[6]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/global/instanceTemplates/" + instanceTemplate.Name},
 	}

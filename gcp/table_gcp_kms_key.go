@@ -142,7 +142,7 @@ func tableGcpKmsKey(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTIONS
 
-func listKeyDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listKeyDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listKeyDetails")
 
 	// Create Service Connection
@@ -199,7 +199,7 @@ func listKeyDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateD
 
 //// HYDRATE FUNCTIONS
 
-func getKeyDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKeyDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKeyDetail")
 
 	// Create Service Connection
@@ -228,7 +228,7 @@ func getKeyDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	return resp, nil
 }
 
-func getKeyIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKeyIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKeyIamPolicy")
 
 	// Create Service Connection
@@ -248,7 +248,7 @@ func getKeyIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 
 //// TRANSFORM FUNCTIONS
 
-func kmsKeyTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func kmsKeyTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	key := d.HydrateItem.(*cloudkms.CryptoKey)
 	param := d.Param.(string)
 
@@ -256,7 +256,7 @@ func kmsKeyTurbotData(_ context.Context, d *transform.TransformData) (interface{
 	location := strings.Split(key.Name, "/")[3]
 	key_ring_name := strings.Split(key.Name, "/")[5]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  project,
 		"Location": location,
 		"KeyRing":  key_ring_name,
@@ -266,7 +266,7 @@ func kmsKeyTurbotData(_ context.Context, d *transform.TransformData) (interface{
 	return turbotData[param], nil
 }
 
-func kmsKeySelfLink(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func kmsKeySelfLink(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*cloudkms.CryptoKey)
 	selfLink := "https://cloudkms.googleapis.com/v1/" + data.Name
 

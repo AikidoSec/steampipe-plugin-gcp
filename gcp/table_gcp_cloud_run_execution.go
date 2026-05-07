@@ -242,7 +242,7 @@ func tableGcpCloudRunExecution(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listCloudRunExecutions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listCloudRunExecutions(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	region := d.EqualsQualString("location")
 
 	var location string
@@ -318,7 +318,7 @@ func listCloudRunExecutions(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// HYDRATE FUNCTIONS
 
-func getCloudRunExecution(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getCloudRunExecution(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudRunService(ctx, d)
 	if err != nil {
@@ -354,7 +354,7 @@ func getCloudRunExecution(ctx context.Context, d *plugin.QueryData, h *plugin.Hy
 
 //// TRANSFORM FUNCTIONS
 
-func cloudRunExecutionSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func cloudRunExecutionSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*run.GoogleCloudRunV2Execution)
 
 	var location string
@@ -374,7 +374,7 @@ func cloudRunExecutionSelfLink(ctx context.Context, d *plugin.QueryData, h *plug
 	return selfLink, nil
 }
 
-func cloudRunExecutionData(ctx context.Context, h *transform.TransformData) (interface{}, error) {
+func cloudRunExecutionData(ctx context.Context, h *transform.TransformData) (any, error) {
 	data := h.HydrateItem.(*run.GoogleCloudRunV2Execution)
 	param := h.Param.(string)
 
@@ -385,7 +385,7 @@ func cloudRunExecutionData(ctx context.Context, h *transform.TransformData) (int
 	jobName := parts[5]
 	name := parts[7]
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectID,
 		"Title":    name,
 		"Location": location,

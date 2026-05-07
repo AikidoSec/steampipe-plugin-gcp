@@ -72,7 +72,7 @@ func tableGcpIAMPolicy(ctx context.Context) *plugin.Table {
 
 //// FETCH FUNCTIONS
 
-func listGcpIamPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpIamPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := CloudResourceManagerService(ctx, d)
 	if err != nil {
@@ -101,7 +101,7 @@ func listGcpIamPolicies(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 	return nil, nil
 }
 
-func getIamPolicyTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getIamPolicyTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 
 	projectId, err := getProject(ctx, d, h)
@@ -117,7 +117,7 @@ func getIamPolicyTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.
 	akas := []string{"gcp://cloudresourcemanager.googleapis.com/projects/" + project + "/iamPolicy"}
 
 	// Mapping all turbot defined properties
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Akas":  akas,
 		"Title": title,
 	}

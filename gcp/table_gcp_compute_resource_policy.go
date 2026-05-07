@@ -135,7 +135,7 @@ func tableGcpComputeResourcePolicy(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeResourcePolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeResourcePolicies(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeResourcePolicies")
 
 	// Create Service Connection
@@ -201,7 +201,7 @@ func listComputeResourcePolicies(ctx context.Context, d *plugin.QueryData, h *pl
 
 //// HYDRATE FUNCTIONS
 
-func getComputeResourcePolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeResourcePolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getComputeResourcePolicy")
 
 	// Create Service Connection
@@ -249,7 +249,7 @@ func getComputeResourcePolicy(ctx context.Context, d *plugin.QueryData, h *plugi
 	return &resourcePolicy, nil
 }
 
-func getComputeResourcePolicyIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeResourcePolicyIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*compute.ResourcePolicy)
 
 	// Create Service Connection
@@ -270,7 +270,7 @@ func getComputeResourcePolicyIamPolicy(ctx context.Context, d *plugin.QueryData,
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeResourcePolicyAkas(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeResourcePolicyAkas(_ context.Context, d *transform.TransformData) (any, error) {
 	data := d.HydrateItem.(*compute.ResourcePolicy)
 
 	akas := strings.ReplaceAll(data.SelfLink, "https://www.googleapis.com/compute/v1/", "gcp://compute.googleapis.com/")

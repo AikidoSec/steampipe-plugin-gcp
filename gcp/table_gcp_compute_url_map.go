@@ -199,7 +199,7 @@ func tableGcpComputeURLMap(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeURLMaps(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeURLMaps(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeURLMaps")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -252,7 +252,7 @@ func listComputeURLMaps(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getComputeURLMap(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeURLMap(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -295,7 +295,7 @@ func getComputeURLMap(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeURLMapAka(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeURLMapAka(_ context.Context, d *transform.TransformData) (any, error) {
 	urlMap := d.HydrateItem.(*compute.UrlMap)
 	region := getLastPathElement(types.SafeString(urlMap.Region))
 	project := strings.Split(urlMap.SelfLink, "/")[6]
@@ -309,7 +309,7 @@ func gcpComputeURLMapAka(_ context.Context, d *transform.TransformData) (interfa
 	return akas, nil
 }
 
-func gcpComputeURLMapLocation(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeURLMapLocation(_ context.Context, d *transform.TransformData) (any, error) {
 	urlMap := d.HydrateItem.(*compute.UrlMap)
 	param := d.Param.(string)
 	regionName := getLastPathElement(types.SafeString(urlMap.Region))

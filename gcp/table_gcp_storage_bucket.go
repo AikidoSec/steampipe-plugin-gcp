@@ -248,7 +248,7 @@ func tableGcpStorageBucket(_ context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listGcpStorageBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listGcpStorageBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Get project details
 
 	projectId, err := getProject(ctx, d, h)
@@ -296,7 +296,7 @@ func listGcpStorageBuckets(ctx context.Context, d *plugin.QueryData, h *plugin.H
 	return nil, err
 }
 
-func getGcpStorageBucket(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpStorageBucket(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// project := projectName
 	name := d.EqualsQuals["name"].GetStringValue()
 
@@ -316,7 +316,7 @@ func getGcpStorageBucket(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 
 //// HYDRATE FUNCTIONS
 
-func getGcpStorageBucketIAMPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getGcpStorageBucketIAMPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getGcpStorageBucketIAMPolicy")
 	bucket := h.Item.(*storage.Bucket)
 
@@ -334,7 +334,7 @@ func getGcpStorageBucketIAMPolicy(ctx context.Context, d *plugin.QueryData, h *p
 	return resp, nil
 }
 
-func getBucketAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getBucketAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	bucket := h.Item.(*storage.Bucket)
 
 	// Get project details
@@ -349,10 +349,10 @@ func getBucketAka(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateDat
 	return akas, nil
 }
 
-func extractRetentionPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func extractRetentionPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	bucket := h.Item.(*storage.Bucket)
 
-	bucketRetentionPolicy := make(map[string]interface{})
+	bucketRetentionPolicy := make(map[string]any)
 
 	if bucket.RetentionPolicy != nil {
 

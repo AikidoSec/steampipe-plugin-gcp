@@ -82,7 +82,7 @@ func tableGcpKmsKeyRing(ctx context.Context) *plugin.Table {
 }
 
 // // LIST FUNCTION
-func listKeyRingDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listKeyRingDetails(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listKeyRingDetails")
 
 	var location string
@@ -141,7 +141,7 @@ func listKeyRingDetails(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 
 //// HYDRATE FUNCTIONS
 
-func getKeyRingDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKeyRingDetail(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKeyRingDetail")
 
 	var location string
@@ -179,7 +179,7 @@ func getKeyRingDetail(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrat
 	return resp, nil
 }
 
-func getKmsKeyRingIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getKmsKeyRingIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("getKmsKeyRingIamPolicy")
 
 	// Create Service Connection
@@ -200,12 +200,12 @@ func getKmsKeyRingIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.
 
 //// TRANSFORM FUNCTIONS
 
-func gcpKmsKeyRingTurbotData(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpKmsKeyRingTurbotData(_ context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	key := h.Item.(*cloudkms.KeyRing)
 
 	data := strings.Split(key.Name, "/")
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  data[1],
 		"Location": data[3],
 		"Akas":     []string{"gcp://cloudkms.googleapis.com/" + key.Name},

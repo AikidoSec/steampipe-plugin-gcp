@@ -137,7 +137,7 @@ func tableGcpDataplexLake(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listDataplexLakes(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listDataplexLakes(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -214,7 +214,7 @@ func listDataplexLakes(ctx context.Context, d *plugin.QueryData, h *plugin.Hydra
 
 //// HYDRATE FUNCTIONS
 
-func getDataplexLake(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getDataplexLake(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
 	// Since, when the service API is disabled, matrixLocation value will be nil
@@ -258,7 +258,7 @@ func getDataplexLake(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	return resp, nil
 }
 
-func gcpDataplexLakeTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func gcpDataplexLakeTurbotData(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	lake := h.Item.(*dataplex.GoogleCloudDataplexV1Lake)
 
 	// Get project details
@@ -274,7 +274,7 @@ func gcpDataplexLakeTurbotData(ctx context.Context, d *plugin.QueryData, h *plug
 		location = matrixLocation
 	}
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project":  projectId,
 		"Location": location,
 		"Akas":     []string{"gcp://dataplex.googleapis.com/" + lake.Name},
@@ -283,7 +283,7 @@ func gcpDataplexLakeTurbotData(ctx context.Context, d *plugin.QueryData, h *plug
 	return turbotData, nil
 }
 
-func dataplexLakeSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func dataplexLakeSelfLink(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	data := h.Item.(*dataplex.GoogleCloudDataplexV1Lake)
 
 	selfLink := "https://dataplex.googleapis.com/v1/" + data.Name

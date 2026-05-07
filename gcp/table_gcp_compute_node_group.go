@@ -159,7 +159,7 @@ func tableGcpComputeNodeGroup(ctx context.Context) *plugin.Table {
 
 //// LIST FUNCTION
 
-func listComputeNodeGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func listComputeNodeGroups(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	plugin.Logger(ctx).Trace("listComputeNodeGroups")
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
@@ -223,7 +223,7 @@ func listComputeNodeGroups(ctx context.Context, d *plugin.QueryData, h *plugin.H
 
 //// HYDRATE FUNCTIONS
 
-func getComputeNodeGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeNodeGroup(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -264,7 +264,7 @@ func getComputeNodeGroup(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 	return &nodeGroup, nil
 }
 
-func getComputeNodeGroupIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+func getComputeNodeGroupIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (any, error) {
 	// Create Service Connection
 	service, err := ComputeService(ctx, d)
 	if err != nil {
@@ -290,14 +290,14 @@ func getComputeNodeGroupIamPolicy(ctx context.Context, d *plugin.QueryData, h *p
 
 //// TRANSFORM FUNCTIONS
 
-func gcpComputeNodeGroupTurbotData(_ context.Context, d *transform.TransformData) (interface{}, error) {
+func gcpComputeNodeGroupTurbotData(_ context.Context, d *transform.TransformData) (any, error) {
 	nodeGroup := d.HydrateItem.(*compute.NodeGroup)
 	param := d.Param.(string)
 
 	project := strings.Split(nodeGroup.SelfLink, "/")[6]
 	zone := getLastPathElement(types.SafeString(nodeGroup.Zone))
 
-	turbotData := map[string]interface{}{
+	turbotData := map[string]any{
 		"Project": project,
 		"Akas":    []string{"gcp://compute.googleapis.com/projects/" + project + "/zones/" + zone + "/nodeGroups/" + nodeGroup.Name},
 	}
