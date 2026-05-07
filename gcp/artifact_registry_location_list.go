@@ -42,9 +42,6 @@ func BuildArtifactRegistryLocationList(ctx context.Context, d *plugin.QueryData)
 	project := projectData.Project
 
 	resp := service.Projects.Locations.List("projects/" + project)
-	if err != nil {
-		return nil
-	}
 
 	var locations []*artifactregistry.Location
 

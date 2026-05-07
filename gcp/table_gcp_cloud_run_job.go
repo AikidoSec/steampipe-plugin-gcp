@@ -147,7 +147,7 @@ func tableGcpCloudRunJob(ctx context.Context) *plugin.Table {
 			// JSON fields
 			{
 				Name:        "annotations",
-				Description: "Unstructured key value map that may be set by external tools to store and arbitrary metadata.",
+				Description: "Unstructured key value map that may be set by external tools to store arbitrary metadata.",
 				Type:        proto.ColumnType_JSON,
 			},
 			{
@@ -228,7 +228,7 @@ func tableGcpCloudRunJob(ctx context.Context) *plugin.Table {
 //// LIST FUNCTION
 
 func listCloudRunJobs(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
-	region := d.EqualsQualString("region")
+	region := d.EqualsQualString("location")
 
 	var location string
 	matrixLocation := d.EqualsQualString(matrixKeyLocation)
