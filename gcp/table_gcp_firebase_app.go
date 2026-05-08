@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/turbot/go-kit/types"
@@ -142,6 +143,9 @@ func firebaseAppInfoData(ctx context.Context, h *transform.TransformData) (inter
 
 	// Name format: projects/{projectId}/{platform}Apps/{appId}
 	parts := strings.Split(data.Name, "/")
+	if len(parts) < 4 {
+		return nil, fmt.Errorf("unexpected FirebaseAppInfo name format: %q", data.Name)
+	}
 	projectID := parts[1]
 	appType := parts[2]
 	appId := parts[3]
