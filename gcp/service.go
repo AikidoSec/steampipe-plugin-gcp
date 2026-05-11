@@ -5,6 +5,8 @@ import (
 
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	redis "cloud.google.com/go/redis/apiv1"
+	spannerdb "cloud.google.com/go/spanner/admin/database/apiv1"
+	spannerinst "cloud.google.com/go/spanner/admin/instance/apiv1"
 	rediscluster "cloud.google.com/go/redis/cluster/apiv1"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"google.golang.org/api/accessapproval/v1"
@@ -870,6 +872,42 @@ func RedisClusterService(ctx context.Context, d *plugin.QueryData) (*rediscluste
 
 	// so it was not in cache - create service
 	svc, err := rediscluster.NewCloudRedisClusterClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	d.ConnectionManager.Cache.Set(serviceCacheKey, svc)
+	return svc, nil
+}
+
+// SpannerInstanceAdminService returns the service connection for GCP Spanner Instance Admin
+func SpannerInstanceAdminService(ctx context.Context, d *plugin.QueryData) (*spannerinst.InstanceAdminClient, error) {
+	serviceCacheKey := "SpannerInstanceAdminService"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
+		return cachedData.(*spannerinst.InstanceAdminClient), nil
+	}
+
+	opts := setSessionConfig(ctx, d.Connection)
+
+	svc, err := spannerinst.NewInstanceAdminClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	d.ConnectionManager.Cache.Set(serviceCacheKey, svc)
+	return svc, nil
+}
+
+// SpannerDatabaseAdminService returns the service connection for GCP Spanner Database Admin
+func SpannerDatabaseAdminService(ctx context.Context, d *plugin.QueryData) (*spannerdb.DatabaseAdminClient, error) {
+	serviceCacheKey := "SpannerDatabaseAdminService"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
+		return cachedData.(*spannerdb.DatabaseAdminClient), nil
+	}
+
+	opts := setSessionConfig(ctx, d.Connection)
+
+	svc, err := spannerdb.NewDatabaseAdminClient(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
