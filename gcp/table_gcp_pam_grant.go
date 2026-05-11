@@ -67,7 +67,7 @@ func tableGcpPamGrant(_ context.Context) *plugin.Table {
 				Name:        "justification",
 				Type:        proto.ColumnType_STRING,
 				Description: "Unstructured justification text provided by the requester.",
-				Transform:   transform.FromP(pamGrantJustification, "Text"),
+				Transform:   transform.From(pamGrantJustification),
 			},
 			{
 				Name:        "externally_modified",
