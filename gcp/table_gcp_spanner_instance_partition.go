@@ -224,7 +224,13 @@ func getGcpSpannerInstancePartition(ctx context.Context, d *plugin.QueryData, h 
 		return nil, err
 	}
 
-	return &spannerInstancePartitionRow{InstancePartition: resp, InstanceLocation: ""}, nil
+	location, err := fetchSpannerInstanceLocation(ctx, d, instanceId)
+	if err != nil {
+		logger.Error("gcp_spanner_instance_partition.getGcpSpannerInstancePartition", "instance_location_error", err)
+		return nil, err
+	}
+
+	return &spannerInstancePartitionRow{InstancePartition: resp, InstanceLocation: location}, nil
 }
 
 //// TRANSFORM FUNCTIONS

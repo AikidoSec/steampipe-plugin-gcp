@@ -270,3 +270,19 @@ func spannerInstanceLocation(_ context.Context, d *transform.TransformData) (int
 	// The config-id encodes the region (e.g. "us-central1", "nam3", "regional-us-east1")
 	return getLastPathElement(instance.Config), nil
 }
+
+// fetchSpannerInstanceLocation retrieves the location for a given instance resource name.
+// Used by child resource Get functions that need to populate InstanceLocation.
+func fetchSpannerInstanceLocation(ctx context.Context, d *plugin.QueryData, instanceResourceName string) (string, error) {
+	service, err := SpannerInstanceAdminService(ctx, d)
+	if err != nil {
+		return "", err
+	}
+
+	instance, err := service.GetInstance(ctx, &instancepb.GetInstanceRequest{Name: instanceResourceName})
+	if err != nil {
+		return "", err
+	}
+
+	return getLastPathElement(instance.Config), nil
+}

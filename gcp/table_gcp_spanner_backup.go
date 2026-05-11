@@ -273,7 +273,13 @@ func getGcpSpannerBackup(ctx context.Context, d *plugin.QueryData, h *plugin.Hyd
 		return nil, err
 	}
 
-	return &spannerBackupRow{Backup: resp, InstanceLocation: ""}, nil
+	location, err := fetchSpannerInstanceLocation(ctx, d, instanceId)
+	if err != nil {
+		logger.Error("gcp_spanner_backup.getGcpSpannerBackup", "instance_location_error", err)
+		return nil, err
+	}
+
+	return &spannerBackupRow{Backup: resp, InstanceLocation: location}, nil
 }
 
 //// TRANSFORM FUNCTIONS

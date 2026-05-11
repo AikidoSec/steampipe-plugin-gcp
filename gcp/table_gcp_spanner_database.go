@@ -231,7 +231,13 @@ func getGcpSpannerDatabase(ctx context.Context, d *plugin.QueryData, h *plugin.H
 		return nil, err
 	}
 
-	return &spannerDatabaseRow{Database: resp, InstanceLocation: ""}, nil
+	location, err := fetchSpannerInstanceLocation(ctx, d, instanceId)
+	if err != nil {
+		logger.Error("gcp_spanner_database.getGcpSpannerDatabase", "instance_location_error", err)
+		return nil, err
+	}
+
+	return &spannerDatabaseRow{Database: resp, InstanceLocation: location}, nil
 }
 
 //// TRANSFORM FUNCTIONS
