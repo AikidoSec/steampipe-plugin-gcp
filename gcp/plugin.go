@@ -259,6 +259,8 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gcp_firestore_database":                                  tableGcpFirestoreDatabase(ctx),
 			"gcp_iam_policy":                                          tableGcpIAMPolicy(ctx),
 			"gcp_iam_role":                                            tableGcpIamRole(ctx),
+			"gcp_iam_workload_identity_pool":                          tableGcpIamWorkloadIdentityPool(ctx),
+			"gcp_iam_workload_identity_pool_provider":                 tableGcpIamWorkloadIdentityPoolProvider(ctx),
 			"gcp_kms_key":                                             tableGcpKmsKey(ctx),
 			"gcp_kms_key_ring":                                        tableGcpKmsKeyRing(ctx),
 			"gcp_kms_key_version":                                     tableGcpKmsKeyVersion(ctx),
