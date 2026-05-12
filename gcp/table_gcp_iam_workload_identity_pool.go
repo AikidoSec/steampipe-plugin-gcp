@@ -71,6 +71,7 @@ func tableGcpIamWorkloadIdentityPool(_ context.Context) *plugin.Table {
 				Name:        "expire_time",
 				Description: "Time after which the workload identity pool will be permanently purged and cannot be recovered.",
 				Type:        proto.ColumnType_TIMESTAMP,
+				Transform:   transform.FromField("ExpireTime").Transform(transform.NullIfZeroValue),
 			},
 			{
 				Name:        "inline_certificate_issuance_config",

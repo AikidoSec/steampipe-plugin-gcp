@@ -70,6 +70,7 @@ func tableGcpIamWorkloadIdentityPoolProvider(_ context.Context) *plugin.Table {
 				Name:        "expire_time",
 				Description: "Time after which the provider will be permanently purged and cannot be recovered.",
 				Type:        proto.ColumnType_TIMESTAMP,
+				Transform:   transform.FromField("ExpireTime").Transform(transform.NullIfZeroValue),
 			},
 			{
 				Name:        "attribute_condition",
