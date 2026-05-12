@@ -181,6 +181,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gcp_organization_audit_policy":                           tableGcpOrganizationAuditPolicy(ctx),
 			"gcp_bigquery_dataset":                                    tableGcpBigQueryDataset(ctx),
 			"gcp_bigquery_job":                                        tableGcpBigQueryJob(ctx),
+			"gcp_bigquery_routine":                                    tableGcpBigQueryRoutine(ctx),
 			"gcp_bigquery_table":                                      tableGcpBigqueryTable(ctx),
 			"gcp_bigtable_instance":                                   tableGcpBigtableInstance(ctx),
 			"gcp_billing_account":                                     tableGcpBillingAccount(ctx),
