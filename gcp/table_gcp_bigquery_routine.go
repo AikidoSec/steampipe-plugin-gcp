@@ -241,7 +241,10 @@ func getBigQueryRoutine(ctx context.Context, d *plugin.QueryData, h *plugin.Hydr
 		routineID = d.EqualsQuals["routine_id"].GetStringValue()
 	}
 
-	if routineID == "" || datasetID == "" {
+	if datasetID == "" {
+		return nil, nil
+	}
+	if routineID == "" {
 		return nil, nil
 	}
 
