@@ -14,7 +14,7 @@ import (
 
 //// TABLE DEFINITION
 
-func tableGcpCloudRunService(ctx context.Context) *plugin.Table {
+func tableGcpCloudRunService(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "gcp_cloud_run_service",
 		Description: "GCP Cloud Run Service",
