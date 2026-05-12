@@ -4,6 +4,7 @@ go 1.26.2
 
 require (
 	cloud.google.com/go/aiplatform v1.120.0
+	cloud.google.com/go/privilegedaccessmanager v0.8.0
 	cloud.google.com/go/resourcemanager v1.10.7
 	cloud.google.com/go/spanner v1.91.0
 	github.com/mitchellh/go-homedir v1.1.0

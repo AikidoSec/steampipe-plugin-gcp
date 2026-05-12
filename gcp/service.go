@@ -4,6 +4,7 @@ import (
 	"context"
 
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
+	pam "cloud.google.com/go/privilegedaccessmanager/apiv1"
 	redis "cloud.google.com/go/redis/apiv1"
 	spannerdb "cloud.google.com/go/spanner/admin/database/apiv1"
 	spannerinst "cloud.google.com/go/spanner/admin/instance/apiv1"
@@ -908,6 +909,24 @@ func SpannerDatabaseAdminService(ctx context.Context, d *plugin.QueryData) (*spa
 	opts := setSessionConfig(ctx, d.Connection)
 
 	svc, err := spannerdb.NewDatabaseAdminClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	d.ConnectionManager.Cache.Set(serviceCacheKey, svc)
+	return svc, nil
+}
+
+// PrivilegedAccessManagerService returns the service connection for GCP Privileged Access Manager
+func PrivilegedAccessManagerService(ctx context.Context, d *plugin.QueryData) (*pam.Client, error) {
+	serviceCacheKey := "PrivilegedAccessManagerService"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
+		return cachedData.(*pam.Client), nil
+	}
+
+	opts := setSessionConfig(ctx, d.Connection)
+
+	svc, err := pam.NewClient(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
