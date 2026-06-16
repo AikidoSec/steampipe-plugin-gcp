@@ -3,6 +3,7 @@ package gcp
 import (
 	"context"
 	"strings"
+	"sync"
 
 	"github.com/turbot/go-kit/types"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
@@ -204,8 +205,11 @@ func listComputeNetworkEndpointGroups(ctx context.Context, d *plugin.QueryData, 
 		return nil, err
 	}
 
+	wg := sync.WaitGroup{}
 	for _, matrixItem := range BuildComputeLocationList(ctx, d) {
 		go func() {
+			wg.Add(1)
+			defer wg.Done()
 			region := matrixItem[matrixKeyLocation].(string)
 			regionalCall := service.RegionNetworkEndpointGroups.List(project, region).MaxResults(*pageSize)
 
@@ -228,6 +232,7 @@ func listComputeNetworkEndpointGroups(ctx context.Context, d *plugin.QueryData, 
 			}
 		}()
 	}
+	wg.Wait()
 
 	zonalCall := service.NetworkEndpointGroups.AggregatedList(project).MaxResults(*pageSize)
 	if err := zonalCall.Pages(ctx, func(page *compute.NetworkEndpointGroupAggregatedList) error {
