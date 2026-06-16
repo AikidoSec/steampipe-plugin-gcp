@@ -224,6 +224,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"gcp_compute_machine_image":                               tableGcpComputeMachineImage(ctx),
 			"gcp_compute_machine_type":                                tableGcpComputeMachineType(ctx),
 			"gcp_compute_network":                                     tableGcpComputeNetwork(ctx),
+			"gcp_compute_network_endpoint_group":                      tableGcpComputeNetworkEndpointGroup(ctx),
 			"gcp_compute_node_group":                                  tableGcpComputeNodeGroup(ctx),
 			"gcp_compute_node_template":                               tableGcpComputeNodeTemplate(ctx),
 			"gcp_compute_project_metadata":                            tableGcpComputeProjectMetadata(ctx),
