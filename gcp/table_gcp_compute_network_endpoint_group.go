@@ -207,8 +207,8 @@ func listComputeNetworkEndpointGroups(ctx context.Context, d *plugin.QueryData, 
 
 	wg := sync.WaitGroup{}
 	for _, matrixItem := range BuildComputeLocationList(ctx, d) {
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 			region := matrixItem[matrixKeyLocation].(string)
 			regionalCall := service.RegionNetworkEndpointGroups.List(project, region).MaxResults(*pageSize)
