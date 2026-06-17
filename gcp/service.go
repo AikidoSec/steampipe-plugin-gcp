@@ -6,9 +6,9 @@ import (
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	pam "cloud.google.com/go/privilegedaccessmanager/apiv1"
 	redis "cloud.google.com/go/redis/apiv1"
+	rediscluster "cloud.google.com/go/redis/cluster/apiv1"
 	spannerdb "cloud.google.com/go/spanner/admin/database/apiv1"
 	spannerinst "cloud.google.com/go/spanner/admin/instance/apiv1"
-	rediscluster "cloud.google.com/go/redis/cluster/apiv1"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"google.golang.org/api/accessapproval/v1"
 	"google.golang.org/api/alloydb/v1"
@@ -34,6 +34,7 @@ import (
 	firebase "google.golang.org/api/firebase/v1beta1"
 	"google.golang.org/api/firestore/v1"
 	"google.golang.org/api/iam/v1"
+	"google.golang.org/api/iap/v1"
 	"google.golang.org/api/logging/v2"
 	"google.golang.org/api/metastore/v1"
 	"google.golang.org/api/monitoring/v3"
@@ -705,6 +706,27 @@ func IAMService(ctx context.Context, d *plugin.QueryData) (*iam.Service, error) 
 
 	// so it was not in cache - create service
 	svc, err := iam.NewService(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+
+	d.ConnectionManager.Cache.Set(serviceCacheKey, svc)
+	return svc, nil
+}
+
+// IAPService returns the service connection for GCP Identity-Aware Proxy (IAP) service
+func IAPService(ctx context.Context, d *plugin.QueryData) (*iap.Service, error) {
+	// have we already created and cached the service?
+	serviceCacheKey := "IAPService"
+	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
+		return cachedData.(*iap.Service), nil
+	}
+
+	// To get config arguments from plugin config file
+	opts := setSessionConfig(ctx, d.Connection)
+
+	// so it was not in cache - create service
+	svc, err := iap.NewService(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
