@@ -10,6 +10,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 
 	"google.golang.org/api/compute/v1"
+	"google.golang.org/api/iap/v1"
 )
 
 //// TABLE DEFINITION
@@ -35,6 +36,13 @@ func tableGcpComputeBackendService(ctx context.Context) *plugin.Table {
 				{Name: "enable_cdn", Require: plugin.Optional, Operators: []string{"<>", "="}},
 			},
 			Tags: map[string]string{"service": "compute", "action": "backendServices.list"},
+		},
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:              getComputeBackendServiceIapIamPolicy,
+				Tags:              map[string]string{"service": "iap", "action": "getIamPolicy"},
+				ShouldIgnoreError: isIgnorableError([]string{"403", "404"}),
+			},
 		},
 		Columns: []*plugin.Column{
 			{
@@ -188,6 +196,13 @@ func tableGcpComputeBackendService(ctx context.Context) *plugin.Table {
 				Name:        "iap",
 				Description: "Specifies the configurations for Identity-Aware Proxy on this resource.",
 				Type:        proto.ColumnType_JSON,
+			},
+			{
+				Name:        "iap_iam_policy",
+				Description: "The IAP IAM policy controlling which principals are granted access (e.g. roles/iap.httpsResourceAccessor) to this backend service through Identity-Aware Proxy.",
+				Type:        proto.ColumnType_JSON,
+				Hydrate:     getComputeBackendServiceIapIamPolicy,
+				Transform:   transform.FromValue(),
 			},
 			{
 				Name:        "security_settings",
@@ -346,6 +361,36 @@ func getComputeBackendService(ctx context.Context, d *plugin.QueryData, h *plugi
 	}
 
 	return &backendService, nil
+}
+
+func getComputeBackendServiceIapIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+	backendService := h.Item.(*compute.BackendService)
+
+	// Get project details
+	projectId, err := getProject(ctx, d, h)
+	if err != nil {
+		return nil, err
+	}
+	project := projectId.(string)
+
+	// Create Service Connection
+	service, err := IAPService(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("gcp_compute_backend_service.getComputeBackendServiceIapIamPolicy", "service_error", err)
+		return nil, err
+	}
+
+	// IAP resource name for a Compute (load balancer) backend service.
+	// https://cloud.google.com/iap/docs/managing-access-rest
+	resource := "projects/" + project + "/iap_web/compute/services/" + backendService.Name
+
+	resp, err := service.V1.GetIamPolicy(resource, &iap.GetIamPolicyRequest{}).Do()
+	if err != nil {
+		plugin.Logger(ctx).Error("gcp_compute_backend_service.getComputeBackendServiceIapIamPolicy", "api_error", err)
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 //// TRANSFORM FUNCTIONS

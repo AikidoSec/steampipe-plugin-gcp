@@ -9,6 +9,7 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 
+	"google.golang.org/api/iap/v1"
 	"google.golang.org/api/run/v2"
 )
 
@@ -37,6 +38,11 @@ func tableGcpCloudRunService(_ context.Context) *plugin.Table {
 			{
 				Func: getCloudRunServiceIamPolicy,
 				Tags: map[string]string{"service": "run", "action": "services.getIamPolicy"},
+			},
+			{
+				Func:              getCloudRunServiceIapIamPolicy,
+				Tags:              map[string]string{"service": "iap", "action": "getIamPolicy"},
+				ShouldIgnoreError: isIgnorableError([]string{"403", "404"}),
 			},
 		},
 		GetMatrixItemFunc: BuildCloudRunLocationList,
@@ -217,6 +223,13 @@ func tableGcpCloudRunService(_ context.Context) *plugin.Table {
 				Hydrate:     getCloudRunServiceIamPolicy,
 				Transform:   transform.FromValue(),
 			},
+			{
+				Name:        "iap_iam_policy",
+				Description: "The IAP IAM policy controlling which principals are granted access (e.g. roles/iap.httpsResourceAccessor) to this Cloud Run service through Identity-Aware Proxy. This is distinct from iam_policy, which controls run.invoker access.",
+				Type:        proto.ColumnType_JSON,
+				Hydrate:     getCloudRunServiceIapIamPolicy,
+				Transform:   transform.FromValue(),
+			},
 
 			// Standard steampipe columns
 			{
@@ -388,6 +401,39 @@ func getCloudRunServiceIamPolicy(ctx context.Context, d *plugin.QueryData, h *pl
 	}
 
 	return resp, err
+}
+
+func getCloudRunServiceIapIamPolicy(ctx context.Context, d *plugin.QueryData, h *plugin.HydrateData) (interface{}, error) {
+
+	data := h.Item.(*run.GoogleCloudRunV2Service)
+	serviceName := strings.Split(data.Name, "/")[5]
+	location := strings.Split(data.Name, "/")[3]
+
+	// Get project details
+	projectId, err := getProject(ctx, d, h)
+	if err != nil {
+		return nil, err
+	}
+	project := projectId.(string)
+
+	// Create Service Connection
+	service, err := IAPService(ctx, d)
+	if err != nil {
+		plugin.Logger(ctx).Error("gcp_cloud_run_service.getCloudRunServiceIapIamPolicy", "service_error", err)
+		return nil, err
+	}
+
+	// IAP resource name for a Cloud Run service.
+	// https://cloud.google.com/run/docs/securing/identity-aware-proxy-cloud-run
+	resource := "projects/" + project + "/iap_web/cloud_run-" + location + "/services/" + serviceName
+
+	resp, err := service.V1.GetIamPolicy(resource, &iap.GetIamPolicyRequest{}).Do()
+	if err != nil {
+		plugin.Logger(ctx).Error("gcp_cloud_run_service.getCloudRunServiceIapIamPolicy", "api_error", err)
+		return nil, err
+	}
+
+	return resp, nil
 }
 
 //// TRANSFORM FUNCTIONS
