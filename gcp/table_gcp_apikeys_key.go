@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/turbot/go-kit/types"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
@@ -162,9 +163,11 @@ func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 			return nil
 		},
 	); err != nil {
-		keys, err = listWithCloudAssetSearchAllResources(ctx, d, project)
-		if err != nil {
-			logger.Error("gcp_api_key.listApiKeysKeys", "api_error", err)
+		var cErr error
+		keys, cErr = listWithCloudAssetSearchAllResources(ctx, d, project)
+		if cErr != nil {
+			err = multierror.Append(err, cErr)
+			logger.Error("gcp_api_key.listApiKeysKeys", "api_errors", err)
 			return nil, err
 		}
 	}
