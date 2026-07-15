@@ -143,7 +143,6 @@ func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 	// NOTE: Key is a global resource; hence the only supported value for location is `global`.
 	resp := service.Projects.Locations.Keys.List("projects/" + project + "/locations/global").PageSize(*pageSize)
 
-	var keys []*apikeys.V2Key
 	if err := resp.Pages(
 		ctx,
 		func(page *apikeys.V2ListKeysResponse) error {
@@ -151,7 +150,7 @@ func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 			d.WaitForListRateLimit(ctx)
 
 			for _, item := range page.Keys {
-				keys = append(keys, item)
+				d.StreamListItem(ctx, item)
 
 				// Check if context has been cancelled or if the limit has been hit (if specified)
 				// if there is a limit, it will return the number of rows required to reach this limit
@@ -164,19 +163,11 @@ func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 		},
 	); err != nil {
 		var cErr error
-		keys, cErr = listWithCloudAssetSearchAllResources(ctx, d, project)
+		cErr = listWithCloudAssetSearchAllResources(ctx, d, project)
 		if cErr != nil {
 			err = multierror.Append(err, cErr)
 			logger.Error("gcp_api_key.listApiKeysKeys", "api_errors", err)
 			return nil, err
-		}
-	}
-
-	for _, item := range keys {
-		d.StreamListItem(ctx, item)
-
-		if d.RowsRemaining(ctx) == 0 {
-			return nil, nil
 		}
 	}
 
@@ -227,17 +218,16 @@ func gcpApiKeyTurbotData(ctx context.Context, d *transform.TransformData) (inter
 	return akas, nil
 }
 
-func listWithCloudAssetSearchAllResources(ctx context.Context, d *plugin.QueryData, project string) ([]*apikeys.V2Key, error) {
+func listWithCloudAssetSearchAllResources(ctx context.Context, d *plugin.QueryData, project string) error {
 	logger := plugin.Logger(ctx)
 
 	// Create Service Connection
 	service, err := CloudAssetService(ctx, d)
 	if err != nil {
-		logger.Error("gcp_api_key.listApiKeysKeys", "service_error", err)
-		return nil, err
+		logger.Error("gcp_api_key.listWithCloudAssetSearchAllResources", "service_error", err)
+		return err
 	}
 
-	var keys []*apikeys.V2Key
 	pageSize := int64(500)
 	resp := service.V1.SearchAllResources("projects/" + project).
 		AssetTypes("apikeys.googleapis.com/Key").
@@ -257,15 +247,22 @@ func listWithCloudAssetSearchAllResources(ctx context.Context, d *plugin.QueryDa
 				continue
 			}
 
-			keys = append(keys, key)
+			d.StreamListItem(ctx, item)
+
+			// Check if context has been cancelled or if the limit has been hit (if specified)
+			// if there is a limit, it will return the number of rows required to reach this limit
+			if d.RowsRemaining(ctx) == 0 {
+				page.NextPageToken = ""
+				return nil
+			}
 		}
 
 		return nil
 	}); err != nil {
-		return nil, err
+		return err
 	}
 
-	return keys, nil
+	return nil
 }
 
 func apiKeyFromSearchResult(item *cloudasset.ResourceSearchResult) (*apikeys.V2Key, error) {
