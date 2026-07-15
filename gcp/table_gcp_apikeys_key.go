@@ -238,11 +238,11 @@ func listWithCloudAssetSearchAllResources(ctx context.Context, d *plugin.QueryDa
 	}
 
 	var keys []*apikeys.V2Key
-	pageSize := new(int64(500))
+	pageSize := int64(500)
 	resp := service.V1.SearchAllResources("projects/" + project).
 		AssetTypes("apikeys.googleapis.com/Key").
 		ReadMask("name,assetType,displayName,location,createTime,updateTime,versionedResources").
-		PageSize(*pageSize)
+		PageSize(pageSize)
 
 	if err := resp.Pages(ctx, func(page *cloudasset.SearchAllResourcesResponse) error {
 		d.WaitForListRateLimit(ctx)
