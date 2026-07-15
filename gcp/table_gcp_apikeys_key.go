@@ -247,7 +247,7 @@ func listWithCloudAssetSearchAllResources(ctx context.Context, d *plugin.QueryDa
 				continue
 			}
 
-			d.StreamListItem(ctx, item)
+			d.StreamListItem(ctx, key)
 
 			// Check if context has been cancelled or if the limit has been hit (if specified)
 			// if there is a limit, it will return the number of rows required to reach this limit
