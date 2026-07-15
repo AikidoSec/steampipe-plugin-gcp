@@ -615,7 +615,7 @@ func CloudIdentityService(ctx context.Context, d *plugin.QueryData) (*cloudident
 // CloudAssetService returns the service connection for GCP Asset Service
 func CloudAssetService(ctx context.Context, d *plugin.QueryData) (*cloudasset.Service, error) {
 	// have we already created and cached the service?
-	serviceCacheKey := "CloudIdentityService"
+	serviceCacheKey := "CloudAssetService"
 	if cachedData, ok := d.ConnectionManager.Cache.Get(serviceCacheKey); ok {
 		return cachedData.(*cloudasset.Service), nil
 	}

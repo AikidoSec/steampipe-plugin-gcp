@@ -2,11 +2,14 @@ package gcp
 
 import (
 	"context"
+	"encoding/json"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/turbot/go-kit/types"
 	"github.com/turbot/steampipe-plugin-sdk/v5/grpc/proto"
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 	"google.golang.org/api/apikeys/v2"
+	"google.golang.org/api/cloudasset/v1"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )
@@ -159,8 +162,13 @@ func listApiKeysKeys(ctx context.Context, d *plugin.QueryData, h *plugin.Hydrate
 			return nil
 		},
 	); err != nil {
-		logger.Error("gcp_api_key.listApiKeysKeys", "api_error", err)
-		return nil, err
+		var cErr error
+		cErr = listWithCloudAssetSearchAllResources(ctx, d, project)
+		if cErr != nil {
+			err = multierror.Append(err, cErr)
+			logger.Error("gcp_api_key.listApiKeysKeys", "api_errors", err)
+			return nil, err
+		}
 	}
 
 	return nil, nil
@@ -208,4 +216,75 @@ func gcpApiKeyTurbotData(ctx context.Context, d *transform.TransformData) (inter
 	keyData := d.HydrateItem.(*apikeys.V2Key)
 	akas := []string{"gcp://iam.googleapis.com/" + keyData.Name}
 	return akas, nil
+}
+
+func listWithCloudAssetSearchAllResources(ctx context.Context, d *plugin.QueryData, project string) error {
+	logger := plugin.Logger(ctx)
+
+	// Create Service Connection
+	service, err := CloudAssetService(ctx, d)
+	if err != nil {
+		logger.Error("gcp_api_key.listWithCloudAssetSearchAllResources", "service_error", err)
+		return err
+	}
+
+	pageSize := int64(500)
+	resp := service.V1.SearchAllResources("projects/" + project).
+		AssetTypes("apikeys.googleapis.com/Key").
+		ReadMask("name,assetType,displayName,location,createTime,updateTime,versionedResources").
+		PageSize(pageSize)
+
+	if err := resp.Pages(ctx, func(page *cloudasset.SearchAllResourcesResponse) error {
+		d.WaitForListRateLimit(ctx)
+
+		for _, item := range page.Results {
+			key, err := apiKeyFromSearchResult(item)
+			if err != nil {
+				return err
+			}
+
+			if key == nil {
+				continue
+			}
+
+			d.StreamListItem(ctx, key)
+
+			// Check if context has been cancelled or if the limit has been hit (if specified)
+			// if there is a limit, it will return the number of rows required to reach this limit
+			if d.RowsRemaining(ctx) == 0 {
+				page.NextPageToken = ""
+				return nil
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func apiKeyFromSearchResult(item *cloudasset.ResourceSearchResult) (*apikeys.V2Key, error) {
+	if item == nil {
+		return nil, nil
+	}
+
+	for _, vr := range item.VersionedResources {
+		if vr == nil || len(vr.Resource) == 0 {
+			continue
+		}
+
+		if vr.Version != "" && vr.Version != "v2" {
+			continue
+		}
+
+		key := &apikeys.V2Key{}
+		if err := json.Unmarshal(vr.Resource, key); err != nil {
+			return nil, err
+		}
+		return key, nil
+	}
+
+	return nil, nil
 }
